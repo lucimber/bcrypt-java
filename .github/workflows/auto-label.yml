@@ -251,7 +251,7 @@ jobs:
             
             // Build files
             if (filename.includes('build.gradle') || filename.includes('settings.gradle') || 
-                filename.startsWith('gradle/')) {
+                filename.startsWith('gradle/') || filename === 'gradlew' || filename === 'gradlew.bat') {
               labels.add('area: build');
             }
             
@@ -260,9 +260,10 @@ jobs:
               labels.add('area: ci/cd');
             }
             
-            // Dependencies
-            if (filename === 'build.gradle.kts' && file.patch && 
-                (file.patch.includes('implementation') || file.patch.includes('testImplementation'))) {
+            // Dependencies - only add if there are actual dependency changes
+            if ((filename === 'build.gradle.kts' || filename === 'build.gradle') && file.patch && 
+                (file.patch.includes('implementation') || file.patch.includes('testImplementation') ||
+                 file.patch.includes('dependencies {') || file.patch.includes('version'))) {
               labels.add('area: dependencies');
             }
           }
@@ -281,27 +282,36 @@ jobs:
             labels.add('size: XL');
           }
           
-          // Check if community contribution
-          try {
-            await github.rest.orgs.checkMembershipForUser({
-              org: context.repo.owner,
-              username: pr.user.login
-            });
-          } catch (error) {
-            // Not a member, so it's a community contribution
-            labels.add('community-contribution');
-            
-            // Check if first-time contributor
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'all',
-              creator: pr.user.login,
-              per_page: 2
-            });
-            
-            if (prs.length <= 1) {
-              labels.add('first-time-contributor');
+          // Check if community contribution - only for non-bot users
+          // Exclude bots like dependabot, github-actions, etc.
+          const isBot = pr.user.login.includes('[bot]') || 
+                        pr.user.login.includes('-bot') || 
+                        pr.user.login === 'dependabot' ||
+                        pr.user.login === 'github-actions' ||
+                        pr.user.type === 'Bot';
+          
+          if (!isBot) {
+            try {
+              await github.rest.orgs.checkMembershipForUser({
+                org: context.repo.owner,
+                username: pr.user.login
+              });
+            } catch (error) {
+              // Not a member, so it's a community contribution
+              labels.add('community-contribution');
+              
+              // Check if first-time contributor
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'all',
+                creator: pr.user.login,
+                per_page: 2
+              });
+              
+              if (prs.length <= 1) {
+                labels.add('first-time-contributor');
+              }
             }
           }
           
@@ -317,9 +327,5 @@ jobs:
             console.log(`Applied ${labelsArray.length} labels to PR #${pr.number}`);
           }
 
-    - name: Use actions/labeler for path-based labeling
-      uses: actions/labeler@v5
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        configuration-path: .github/labeler.yml
-        sync-labels: false  # Don't remove other labels
+    # Removed actions/labeler to prevent duplicate labels
+    # All labeling is now handled by the script above
