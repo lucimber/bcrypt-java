@@ -195,27 +195,30 @@ class SpringSecurityIntegrationTest {
         String longPassword = "a".repeat(100);
         String truncatedTo72 = "a".repeat(72);
         
-        // Spring Security hash
-        String springHashLong = springEncoder.encode(longPassword);
+        // Spring Security 6.5.3+ now throws exception for passwords > 72 bytes
+        assertThrows(IllegalArgumentException.class, () -> {
+            springEncoder.encode(longPassword);
+        }, "Spring Security 6.5.3+ throws exception for passwords > 72 bytes");
         
-        // Spring should verify truncated version
-        assertTrue(springEncoder.matches(truncatedTo72, springHashLong),
-            "Spring truncates at 72 bytes");
+        // Spring Security should work with exactly 72 bytes
+        String springHash72 = springEncoder.encode(truncatedTo72);
+        assertTrue(springEncoder.matches(truncatedTo72, springHash72),
+            "Spring should handle 72-byte passwords");
         
-        // Our implementation should also verify
+        // Our implementation truncates internally and should verify
         Password truncatedPwd = new Password(truncatedTo72);
-        Hash hash = new Hash(springHashLong);
+        Hash hash = new Hash(springHash72);
         
         assertTrue(service.verify(truncatedPwd, hash),
-            "Our implementation should handle truncation like Spring");
+            "Our implementation should verify Spring's 72-byte hash");
         
-        // Generate with our implementation
+        // Generate with our implementation (which truncates internally)
         Password longPwd = new Password(longPassword);
         Hash ourHash = service.hash(longPwd);
         
         // Spring should verify with truncated password
         assertTrue(springEncoder.matches(truncatedTo72, ourHash.getValue()),
-            "Spring should verify our truncated hash");
+            "Spring should verify our truncated hash with 72-byte password");
     }
     
     @Test
