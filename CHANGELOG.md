@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- bump actions/checkout from 4 to 5 (#3) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 5.10.1 to 5.13.4 (#9) @dependabot[bot]
 - bump actions/github-script from 7 to 8 (#4) @dependabot[bot]
 - bump gradle/gradle-build-action from 2 to 3 (#5) @dependabot[bot]
