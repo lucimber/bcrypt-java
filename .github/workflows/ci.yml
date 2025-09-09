@@ -31,9 +31,7 @@ jobs:
     - name: Run tests
       run: ./gradlew test --info
     
-    - name: Generate test report
-      if: always()
-      run: ./gradlew test jacocoTestReport
+    # Test report generation step removed - Jacoco not configured in build.gradle.kts
     
     - name: Upload test results
       if: always()
@@ -42,13 +40,7 @@ jobs:
         name: test-results-java${{ matrix.java }}
         path: build/test-results/
     
-    - name: Upload coverage reports
-      if: matrix.java == '17'
-      uses: codecov/codecov-action@v4
-      with:
-        file: build/reports/jacoco/test/jacocoTestReport.xml
-        flags: unittests
-        name: codecov-umbrella
+    # Coverage upload step removed - Jacoco not configured in build.gradle.kts
 
   build:
     runs-on: ubuntu-latest
