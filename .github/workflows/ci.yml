@@ -44,7 +44,7 @@ jobs:
     
     - name: Upload coverage reports
       if: matrix.java == '17'
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: build/reports/jacoco/test/jacocoTestReport.xml
         flags: unittests
