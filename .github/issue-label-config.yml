@@ -1,0 +1,213 @@
+# Configuration for automatic issue labeling
+# This file defines rules for automatically applying labels based on issue content
+
+# Keywords that trigger specific labels
+keywords:
+  - label: "type: bug"
+    keywords:
+      - "bug"
+      - "error"
+      - "issue"
+      - "problem"
+      - "broken"
+      - "not working"
+      - "exception"
+      - "crash"
+      - "fails"
+    
+  - label: "type: feature"
+    keywords:
+      - "feature"
+      - "add"
+      - "new"
+      - "implement"
+      - "create"
+      - "support for"
+    
+  - label: "type: enhancement"
+    keywords:
+      - "enhance"
+      - "improve"
+      - "optimize"
+      - "refactor"
+      - "better"
+    
+  - label: "type: documentation"
+    keywords:
+      - "docs"
+      - "documentation"
+      - "readme"
+      - "javadoc"
+      - "comment"
+      - "typo"
+    
+  - label: "area: security"
+    keywords:
+      - "security"
+      - "vulnerability"
+      - "CVE"
+      - "exploit"
+      - "injection"
+      - "timing attack"
+      - "constant time"
+    
+  - label: "area: performance"
+    keywords:
+      - "performance"
+      - "slow"
+      - "speed"
+      - "optimize"
+      - "faster"
+      - "benchmark"
+      - "memory"
+      - "cpu"
+    
+  - label: "area: tests"
+    keywords:
+      - "test"
+      - "junit"
+      - "coverage"
+      - "unit test"
+      - "integration test"
+    
+  - label: "priority: critical"
+    keywords:
+      - "critical"
+      - "urgent"
+      - "emergency"
+      - "production down"
+      - "data loss"
+      - "security vulnerability"
+    
+  - label: "priority: high"
+    keywords:
+      - "high priority"
+      - "important"
+      - "blocking"
+      - "asap"
+    
+  - label: "good first issue"
+    keywords:
+      - "good first issue"
+      - "beginner"
+      - "easy"
+      - "starter"
+      - "newcomer"
+
+# Title patterns that trigger labels
+title_patterns:
+  - pattern: "^\\[BUG\\]"
+    label: "type: bug"
+    
+  - pattern: "^\\[FEATURE\\]"
+    label: "type: feature"
+    
+  - pattern: "^\\[ENHANCEMENT\\]"
+    label: "type: enhancement"
+    
+  - pattern: "^\\[DOCS\\]"
+    label: "type: documentation"
+    
+  - pattern: "^\\[SECURITY\\]"
+    labels:
+      - "area: security"
+      - "priority: critical"
+    
+  - pattern: "^\\[BREAKING\\]"
+    labels:
+      - "breaking-change"
+      - "semver: major"
+
+# Template-based labeling
+templates:
+  - template: "bug_report.md"
+    labels:
+      - "type: bug"
+      - "status: needs-triage"
+    
+  - template: "feature_request.md"
+    labels:
+      - "type: feature"
+      - "status: needs-triage"
+    
+  - template: "security_report.md"
+    labels:
+      - "area: security"
+      - "priority: critical"
+
+# File path patterns for PRs
+file_patterns:
+  - pattern: "src/main/java/com/lucimber/crypto/bcrypt/BCryptEngine.java"
+    labels:
+      - "component: BCryptEngine"
+      - "area: core"
+      - "area: security"
+    
+  - pattern: "src/main/java/com/lucimber/crypto/bcrypt/BCryptService.java"
+    labels:
+      - "component: BCryptService"
+      - "area: api"
+    
+  - pattern: "src/main/java/com/lucimber/crypto/bcrypt/Password.java"
+    labels:
+      - "component: Password"
+      - "area: api"
+    
+  - pattern: "src/main/java/com/lucimber/crypto/bcrypt/Hash.java"
+    labels:
+      - "component: Hash"
+      - "area: api"
+    
+  - pattern: "src/main/java/com/lucimber/crypto/bcrypt/Salt.java"
+    labels:
+      - "component: Salt"
+      - "area: api"
+    
+  - pattern: "src/test/**/*.java"
+    labels:
+      - "area: tests"
+      - "tests"
+    
+  - pattern: "src/test/**/integration/*.java"
+    labels:
+      - "area: integration"
+      - "integration"
+    
+  - pattern: "*.md"
+    labels:
+      - "type: documentation"
+      - "documentation"
+    
+  - pattern: "build.gradle.kts"
+    labels:
+      - "area: build"
+      - "build"
+    
+  - pattern: ".github/workflows/*.yml"
+    labels:
+      - "area: ci/cd"
+
+# Size-based labeling for PRs
+size_labels:
+  - size: 10
+    label: "size: XS"
+  - size: 50
+    label: "size: S"
+  - size: 200
+    label: "size: M"
+  - size: 500
+    label: "size: L"
+  - size: 1000
+    label: "size: XL"
+  - size: 99999
+    label: "size: XXL"
+
+# Author associations
+author_associations:
+  FIRST_TIME_CONTRIBUTOR:
+    - "first-time-contributor"
+    - "community-contribution"
+  CONTRIBUTOR:
+    - "community-contribution"
+  NONE:
+    - "community-contribution"

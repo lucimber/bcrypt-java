@@ -1,0 +1,255 @@
+# GitHub Labels Configuration for BCrypt Java Library
+# 
+# This file defines all labels used in the repository.
+# Can be synced using GitHub Actions with github-label-sync or labels action.
+#
+# Format: - name: "label-name"
+#           color: "hexcolor"
+#           description: "Description of the label"
+
+# Type labels (what kind of issue/PR is this?)
+- name: "type: bug"
+  color: "d73a4a"
+  description: "Something isn't working"
+
+- name: "type: feature"
+  color: "0e8a16"
+  description: "New feature or request"
+
+- name: "type: enhancement"
+  color: "a2eeef"
+  description: "Improvement to existing functionality"
+
+- name: "type: documentation"
+  color: "0075ca"
+  description: "Improvements or additions to documentation"
+
+- name: "type: question"
+  color: "d876e3"
+  description: "Further information is requested"
+
+- name: "type: chore"
+  color: "fef2c0"
+  description: "Maintenance tasks, refactoring, etc."
+
+# Priority labels (how urgent/important is this?)
+- name: "priority: critical"
+  color: "b60205"
+  description: "Critical issue requiring immediate attention"
+
+- name: "priority: high"
+  color: "ff9f1c"
+  description: "High priority issue"
+
+- name: "priority: medium"
+  color: "ffcc00"
+  description: "Medium priority issue"
+
+- name: "priority: low"
+  color: "c5def5"
+  description: "Low priority issue"
+
+# Status labels (what's the current state?)
+- name: "status: needs-triage"
+  color: "e6e6e6"
+  description: "Needs to be triaged and prioritized"
+
+- name: "status: confirmed"
+  color: "0e8a16"
+  description: "Issue has been confirmed and reproduced"
+
+- name: "status: in-progress"
+  color: "fbca04"
+  description: "Work is currently being done"
+
+- name: "status: blocked"
+  color: "d93f0b"
+  description: "Blocked by another issue or external factor"
+
+- name: "status: needs-review"
+  color: "fbca04"
+  description: "Needs code review"
+
+- name: "status: needs-testing"
+  color: "7057ff"
+  description: "Needs testing verification"
+
+- name: "status: stale"
+  color: "795548"
+  description: "No recent activity"
+
+# Area labels (which part of the codebase?)
+- name: "area: core"
+  color: "1d76db"
+  description: "Core BCrypt algorithm implementation"
+
+- name: "area: api"
+  color: "5319e7"
+  description: "Public API surface"
+
+- name: "area: security"
+  color: "d4c5f9"
+  description: "Security-related changes or issues"
+
+- name: "area: performance"
+  color: "006b75"
+  description: "Performance improvements or issues"
+
+- name: "area: tests"
+  color: "bfd4f2"
+  description: "Test suite and coverage"
+
+- name: "area: integration"
+  color: "c2e0c6"
+  description: "Integration with other libraries (Spring, Bouncy Castle)"
+
+- name: "area: build"
+  color: "fad8c7"
+  description: "Build system, Gradle configuration"
+
+- name: "area: ci/cd"
+  color: "98f5ff"
+  description: "Continuous Integration/Deployment"
+
+- name: "area: dependencies"
+  color: "0366d6"
+  description: "Dependency updates or issues"
+
+# Version labels
+- name: "version: 1.0"
+  color: "cccccc"
+  description: "Version 1.0.x"
+
+- name: "version: 1.1"
+  color: "cccccc"
+  description: "Version 1.1.x"
+
+- name: "version: 2.0"
+  color: "cccccc"
+  description: "Version 2.0.x (future)"
+
+# Breaking change labels
+- name: "breaking-change"
+  color: "d73a4a"
+  description: "Introduces breaking changes"
+
+- name: "semver: major"
+  color: "b60205"
+  description: "Major version bump required"
+
+- name: "semver: minor"
+  color: "ff9f1c"
+  description: "Minor version bump required"
+
+- name: "semver: patch"
+  color: "0e8a16"
+  description: "Patch version bump required"
+
+# Platform/Environment labels
+- name: "platform: windows"
+  color: "bfdadc"
+  description: "Windows-specific issue"
+
+- name: "platform: linux"
+  color: "bfdadc"
+  description: "Linux-specific issue"
+
+- name: "platform: macos"
+  color: "bfdadc"
+  description: "macOS-specific issue"
+
+- name: "java: 8"
+  color: "f7c6c7"
+  description: "Java 8 specific"
+
+- name: "java: 11"
+  color: "f7c6c7"
+  description: "Java 11 specific"
+
+- name: "java: 17"
+  color: "f7c6c7"
+  description: "Java 17 specific"
+
+- name: "java: 21"
+  color: "f7c6c7"
+  description: "Java 21 specific"
+
+# Help/Community labels
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "needs-reproduction"
+  color: "d876e3"
+  description: "Needs steps to reproduce the issue"
+
+- name: "needs-more-info"
+  color: "d876e3"
+  description: "Needs more information from reporter"
+
+# Resolution labels
+- name: "resolution: fixed"
+  color: "0e8a16"
+  description: "Issue has been fixed"
+
+- name: "resolution: wontfix"
+  color: "ffffff"
+  description: "This will not be worked on"
+
+- name: "resolution: duplicate"
+  color: "cfd3d7"
+  description: "This issue or pull request already exists"
+
+- name: "resolution: invalid"
+  color: "e4e669"
+  description: "This doesn't seem right"
+
+
+# Special labels
+- name: "pinned"
+  color: "fbca04"
+  description: "Pinned issue/PR - won't be auto-closed"
+
+- name: "needs-backport"
+  color: "fbca04"
+  description: "Needs to be backported to older version"
+
+- name: "community-contribution"
+  color: "0366d6"
+  description: "Contribution from community member"
+
+
+# Size labels (for PRs)
+- name: "size: XS"
+  color: "3ebd5c"
+  description: "Extra small PR (< 10 lines)"
+
+- name: "size: S"
+  color: "5ebd3e"
+  description: "Small PR (10-50 lines)"
+
+- name: "size: M"
+  color: "cfbd3e"
+  description: "Medium PR (50-200 lines)"
+
+- name: "size: L"
+  color: "d9a43e"
+  description: "Large PR (200-500 lines)"
+
+- name: "size: XL"
+  color: "d9633e"
+  description: "Extra large PR (500+ lines)"
+
+# Contributor labels
+- name: "first-time-contributor"
+  color: "7057ff"
+  description: "First contribution to the project"
+
+# Automation labels
+- name: "bot"
+  color: "ededed"
+  description: "Automated action or bot-created"

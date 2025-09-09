@@ -1,0 +1,65 @@
+name: Mark stale issues and pull requests
+
+on:
+  schedule:
+    # Run every day at 1:00 AM UTC
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/stale@v9
+      with:
+        # Issue configuration
+        stale-issue-message: |
+          This issue has been automatically marked as stale because it has not had recent activity. 
+          It will be closed in 14 days if no further activity occurs. 
+          Please comment if you'd like to keep this issue open, and we'll remove the stale label.
+        
+        close-issue-message: |
+          This issue has been automatically closed due to inactivity. 
+          If you believe this issue is still relevant, please feel free to reopen it or create a new issue.
+        
+        stale-issue-label: 'stale'
+        exempt-issue-labels: 'pinned,area: security,type: bug,type: enhancement,type: documentation,help wanted,good first issue'
+        days-before-issue-stale: 60
+        days-before-issue-close: 14
+        
+        # Pull Request configuration
+        stale-pr-message: |
+          This pull request has been automatically marked as stale because it has not had recent activity. 
+          It will be closed in 14 days if no further activity occurs. 
+          Please update the PR or comment if you'd like to keep it open.
+        
+        close-pr-message: |
+          This pull request has been automatically closed due to inactivity. 
+          If you'd like to continue work on this PR, please feel free to reopen it.
+        
+        stale-pr-label: 'stale'
+        exempt-pr-labels: 'pinned,area: security,status: needs-review,breaking-change'
+        days-before-pr-stale: 30
+        days-before-pr-close: 14
+        
+        # General configuration
+        remove-stale-when-updated: true
+        delete-branch: false
+        operations-per-run: 30
+        
+        # Don't mark issues/PRs as stale if they have these labels
+        exempt-all-labels: false
+        
+        # Only process issues/PRs created before this date (ISO 8601 or RFC 2822)
+        start-date: '2024-01-01T00:00:00Z'
+        
+        # Ascending or descending order for processing
+        ascending: false
+        
+        # Debug mode
+        debug-only: false

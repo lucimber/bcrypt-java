@@ -1,0 +1,79 @@
+# Configuration for GitHub Pull Request Labeler
+# This file defines which labels to apply based on file paths
+
+# Documentation changes
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/*.md'
+
+# Source code changes
+source:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/main/**/*.java'
+
+# Test changes
+tests:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/test/**/*.java'
+
+# Build configuration
+build:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
+
+# CI/CD changes
+ci/cd:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+
+# Security-related changes
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/main/java/com/lucimber/crypto/bcrypt/BCryptEngine.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/Password.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/Salt.java'
+      - '.github/SECURITY.md'
+      - 'docs/SECURITY.md'
+
+# API changes
+api:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/main/java/com/lucimber/crypto/bcrypt/BCryptService.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/Password.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/Hash.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/Salt.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/CostFactor.java'
+      - 'src/main/java/com/lucimber/crypto/bcrypt/BCryptVersion.java'
+
+# Integration test changes
+integration:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/test/java/com/lucimber/crypto/bcrypt/integration/**'
+
+# GitHub configuration
+github:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**'
+
+# Dependencies
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'build.gradle.kts'
+      - '.github/dependabot.yml'

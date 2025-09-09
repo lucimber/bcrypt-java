@@ -1,0 +1,325 @@
+name: Auto Label Issues and PRs
+
+on:
+  issues:
+    types: [opened, edited]
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  label-issues:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Auto-label issues based on content
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const issue = context.payload.issue;
+          const title = issue.title.toLowerCase();
+          const body = (issue.body || '').toLowerCase();
+          const labels = new Set();
+          
+          // Type detection based on content
+          if (title.includes('[bug]') || body.includes('bug report') || 
+              body.includes('steps to reproduce') || body.includes('expected behavior')) {
+            labels.add('type: bug');
+          }
+          
+          if (title.includes('[feature]') || body.includes('feature request') || 
+              body.includes('i would like') || body.includes('it would be nice')) {
+            labels.add('type: feature');
+          }
+          
+          if (title.includes('[enhancement]') || body.includes('enhancement') || 
+              body.includes('improve')) {
+            labels.add('type: enhancement');
+          }
+          
+          if (title.includes('[question]') || title.includes('?') || 
+              body.includes('how to') || body.includes('how do i')) {
+            labels.add('type: question');
+          }
+          
+          if (title.includes('[docs]') || title.includes('[documentation]') || 
+              body.includes('documentation') || body.includes('readme')) {
+            labels.add('type: documentation');
+          }
+          
+          // Priority detection
+          if (title.includes('[critical]') || title.includes('[urgent]') || 
+              body.includes('production') || body.includes('security vulnerability') ||
+              body.includes('data loss') || body.includes('crash')) {
+            labels.add('priority: critical');
+          } else if (title.includes('[high]') || body.includes('blocking')) {
+            labels.add('priority: high');
+          } else if (title.includes('[low]') || body.includes('nice to have')) {
+            labels.add('priority: low');
+          }
+          
+          // Area detection
+          if (body.includes('bcryptengine') || body.includes('algorithm') || 
+              body.includes('blowfish') || body.includes('encryption')) {
+            labels.add('area: core');
+          }
+          
+          if (body.includes('bcryptservice') || body.includes('public api') || 
+              body.includes('interface')) {
+            labels.add('area: api');
+          }
+          
+          if (body.includes('security') || body.includes('vulnerability') || 
+              body.includes('timing attack') || body.includes('constant time')) {
+            labels.add('area: security');
+          }
+          
+          if (body.includes('performance') || body.includes('slow') || 
+              body.includes('optimization') || body.includes('benchmark')) {
+            labels.add('area: performance');
+          }
+          
+          if (body.includes('test') || body.includes('junit') || 
+              body.includes('coverage')) {
+            labels.add('area: tests');
+          }
+          
+          if (body.includes('spring security') || body.includes('bouncy castle') || 
+              body.includes('integration') || body.includes('compatibility')) {
+            labels.add('area: integration');
+          }
+          
+          if (body.includes('gradle') || body.includes('build.gradle') || 
+              body.includes('build fail')) {
+            labels.add('area: build');
+          }
+          
+          // Platform detection
+          if (body.includes('windows') || body.includes('win32') || body.includes('win64')) {
+            labels.add('platform: windows');
+          }
+          
+          if (body.includes('linux') || body.includes('ubuntu') || body.includes('debian')) {
+            labels.add('platform: linux');
+          }
+          
+          if (body.includes('macos') || body.includes('mac os') || body.includes('darwin')) {
+            labels.add('platform: macos');
+          }
+          
+          if (body.includes('java 17') || body.includes('jdk 17')) {
+            labels.add('java: 17');
+          }
+          
+          if (body.includes('java 21') || body.includes('jdk 21')) {
+            labels.add('java: 21');
+          }
+          
+          // Good first issue detection
+          if (title.includes('[good first issue]') || title.includes('[beginner]') || 
+              body.includes('good first issue') || body.includes('beginner friendly')) {
+            labels.add('good first issue');
+          }
+          
+          // Needs more info detection
+          if (body.length < 50) {
+            labels.add('needs-more-info');
+          }
+          
+          // Always add triage for new issues
+          labels.add('status: needs-triage');
+          
+          // Apply labels
+          const labelsArray = Array.from(labels);
+          if (labelsArray.length > 0) {
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: labelsArray
+            });
+            console.log(`Applied ${labelsArray.length} labels to issue #${issue.number}`);
+          }
+
+  label-pull-requests:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Label based on PR content and files
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const pr = context.payload.pull_request;
+          const title = pr.title.toLowerCase();
+          const body = (pr.body || '').toLowerCase();
+          const labels = new Set();
+          
+          // Always add review needed for new PRs
+          if (context.payload.action === 'opened') {
+            labels.add('status: needs-review');
+          }
+          
+          // Conventional commit detection
+          if (title.startsWith('fix:') || title.startsWith('fix(')) {
+            labels.add('type: bug');
+            labels.add('semver: patch');
+          } else if (title.startsWith('feat:') || title.startsWith('feat(')) {
+            labels.add('type: feature');
+            labels.add('semver: minor');
+          } else if (title.startsWith('docs:') || title.startsWith('docs(')) {
+            labels.add('type: documentation');
+          } else if (title.startsWith('test:') || title.startsWith('test(')) {
+            labels.add('area: tests');
+          } else if (title.startsWith('chore:') || title.startsWith('chore(')) {
+            labels.add('type: chore');
+          } else if (title.startsWith('perf:') || title.startsWith('perf(')) {
+            labels.add('area: performance');
+            labels.add('type: enhancement');
+          } else if (title.startsWith('refactor:') || title.startsWith('refactor(')) {
+            labels.add('type: chore');
+          } else if (title.startsWith('build:') || title.startsWith('build(')) {
+            labels.add('area: build');
+          } else if (title.startsWith('ci:') || title.startsWith('ci(')) {
+            labels.add('area: ci/cd');
+          }
+          
+          // Breaking change detection
+          if (title.includes('!:') || body.includes('breaking change:')) {
+            labels.add('breaking-change');
+            labels.add('semver: major');
+          }
+          
+          // Get list of files changed
+          const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: pr.number
+          });
+          
+          // File-based labeling
+          for (const file of files) {
+            const filename = file.filename.toLowerCase();
+            
+            // Documentation
+            if (filename.endsWith('.md') || filename.includes('docs/')) {
+              labels.add('type: documentation');
+            }
+            
+            // Source code
+            if (filename.startsWith('src/main/')) {
+              // API files
+              if (filename.includes('bcryptservice.java') || 
+                  filename.includes('password.java') || 
+                  filename.includes('hash.java') || 
+                  filename.includes('salt.java') ||
+                  filename.includes('costfactor.java') ||
+                  filename.includes('bcryptversion.java')) {
+                labels.add('area: api');
+              }
+              // Core implementation
+              if (filename.includes('bcryptengine.java')) {
+                labels.add('area: core');
+                labels.add('area: security');
+              }
+              if (filename.includes('bcryptbase64.java')) {
+                labels.add('area: core');
+              }
+            }
+            
+            // Tests
+            if (filename.startsWith('src/test/')) {
+              labels.add('area: tests');
+              
+              if (filename.includes('integration/')) {
+                labels.add('area: integration');
+              }
+            }
+            
+            // Build files
+            if (filename.includes('build.gradle') || filename.includes('settings.gradle') || 
+                filename.startsWith('gradle/')) {
+              labels.add('area: build');
+            }
+            
+            // CI/CD
+            if (filename.startsWith('.github/workflows/')) {
+              labels.add('area: ci/cd');
+            }
+            
+            // Dependencies
+            if (filename === 'build.gradle.kts' && file.patch && 
+                (file.patch.includes('implementation') || file.patch.includes('testImplementation'))) {
+              labels.add('area: dependencies');
+            }
+          }
+          
+          // PR size calculation
+          const totalChanges = pr.additions + pr.deletions;
+          if (totalChanges < 10) {
+            labels.add('size: XS');
+          } else if (totalChanges < 50) {
+            labels.add('size: S');
+          } else if (totalChanges < 200) {
+            labels.add('size: M');
+          } else if (totalChanges < 500) {
+            labels.add('size: L');
+          } else {
+            labels.add('size: XL');
+          }
+          
+          // Check if community contribution
+          try {
+            await github.rest.orgs.checkMembershipForUser({
+              org: context.repo.owner,
+              username: pr.user.login
+            });
+          } catch (error) {
+            // Not a member, so it's a community contribution
+            labels.add('community-contribution');
+            
+            // Check if first-time contributor
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              creator: pr.user.login,
+              per_page: 2
+            });
+            
+            if (prs.length <= 1) {
+              labels.add('first-time-contributor');
+            }
+          }
+          
+          // Apply labels
+          const labelsArray = Array.from(labels);
+          if (labelsArray.length > 0) {
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: labelsArray
+            });
+            console.log(`Applied ${labelsArray.length} labels to PR #${pr.number}`);
+          }
+
+    - name: Use actions/labeler for path-based labeling
+      uses: actions/labeler@v5
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        configuration-path: .github/labeler.yml
+        sync-labels: false  # Don't remove other labels

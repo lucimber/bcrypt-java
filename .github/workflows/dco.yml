@@ -1,0 +1,94 @@
+name: DCO Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: DCO Check
+    
+    steps:
+    - name: Get PR Commits
+      id: commits
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const commits = await github.rest.pulls.listCommits({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number
+          });
+          return commits.data.map(c => ({
+            sha: c.sha,
+            message: c.commit.message,
+            author: c.commit.author
+          }));
+    
+    - name: Check DCO
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const commits = ${{ steps.commits.outputs.result }};
+          const dcoRegex = /^Signed-off-by: .+ <.+@.+>$/m;
+          
+          let failed = [];
+          for (const commit of commits) {
+            if (!dcoRegex.test(commit.message)) {
+              failed.push({
+                sha: commit.sha.substring(0, 7),
+                author: commit.author.name
+              });
+            }
+          }
+          
+          if (failed.length > 0) {
+            const failedList = failed.map(c => `- ${c.sha} by ${c.author}`).join('\n');
+            
+            const message = `## ❌ DCO Check Failed
+          
+          The following commits are missing a DCO sign-off:
+          ${failedList}
+          
+          ### How to fix:
+          
+          Please sign off your commits by adding \`Signed-off-by: Your Name <your@email.com>\` to your commit messages.
+          
+          You can sign off your existing commits by:
+          \`\`\`bash
+          git rebase --signoff HEAD~${failed.length}
+          git push --force-with-lease
+          \`\`\`
+          
+          Or configure git to automatically sign off commits:
+          \`\`\`bash
+          git config --global user.name "Your Name"
+          git config --global user.email "your@email.com"
+          \`\`\`
+          
+          Then use \`-s\` flag when committing:
+          \`\`\`bash
+          git commit -s -m "Your commit message"
+          \`\`\`
+          
+          For more information, see our [DCO documentation](https://github.com/${{ github.repository }}/blob/main/docs/DCO.md).`;
+          
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: message
+            });
+            
+            core.setFailed(`${failed.length} commit(s) are missing DCO sign-off`);
+          } else {
+            console.log('✅ All commits have proper DCO sign-off');
+          }

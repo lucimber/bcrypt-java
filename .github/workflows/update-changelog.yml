@@ -1,0 +1,216 @@
+name: Update CHANGELOG.md
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-changelog:
+    # Only run when PR is merged, not just closed
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Update CHANGELOG.md
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Get PR information
+          const pr = context.payload.pull_request;
+          const prNumber = pr.number;
+          const prTitle = pr.title;
+          const prAuthor = pr.user.login;
+          const prLabels = pr.labels.map(l => l.name);
+          const prBody = pr.body || '';
+          const mergeDate = new Date().toISOString().split('T')[0];
+          
+          // Read current CHANGELOG.md
+          const changelogPath = 'CHANGELOG.md';
+          let changelog = '';
+          try {
+            changelog = fs.readFileSync(changelogPath, 'utf8');
+          } catch (error) {
+            console.log('CHANGELOG.md not found, creating new one');
+            changelog = `# Changelog
+          
+          All notable changes to this project will be documented in this file.
+          
+          The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+          and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+          
+          ## [Unreleased]
+          `;
+          }
+          
+          // Determine change type based on labels
+          let changeType = '';
+          let changeEntry = '';
+          
+          // Format the PR title (remove conventional commit prefix if present)
+          let cleanTitle = prTitle
+            .replace(/^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+?\))?:\s*/i, '')
+            .replace(/^(\[.+?\])\s*/, '');
+          
+          // Create the change entry
+          changeEntry = `- ${cleanTitle} (#${prNumber}) @${prAuthor}`;
+          
+          // Determine section based on labels
+          if (prLabels.includes('breaking-change') || prLabels.includes('semver: major')) {
+            changeType = '### ⚠️ Breaking Changes';
+          } else if (prLabels.includes('type: feature')) {
+            changeType = '### Added';
+          } else if (prLabels.includes('type: bug')) {
+            changeType = '### Fixed';
+          } else if (prLabels.includes('area: security')) {
+            changeType = '### Security';
+          } else if (prLabels.includes('type: enhancement') || prLabels.includes('area: performance')) {
+            changeType = '### Changed';
+          } else if (prLabels.includes('type: documentation') || prLabels.includes('documentation')) {
+            changeType = '### Documentation';
+          } else if (prLabels.includes('deprecated')) {
+            changeType = '### Deprecated';
+          } else if (prLabels.includes('removed')) {
+            changeType = '### Removed';
+          } else {
+            changeType = '### Changed';
+          }
+          
+          // Skip if labeled to skip changelog
+          if (prLabels.includes('skip-changelog')) {
+            console.log('PR labeled with skip-changelog, skipping update');
+            return;
+          }
+          
+          // Find the [Unreleased] section or create it
+          const unreleasedRegex = /## \[Unreleased\]/;
+          const nextVersionRegex = /## \[\d+\.\d+\.\d+\]/;
+          
+          if (!unreleasedRegex.test(changelog)) {
+            // No [Unreleased] section, add it after the header
+            const headerEnd = changelog.indexOf('\n## ');
+            if (headerEnd === -1) {
+              // No version sections yet
+              changelog += '\n## [Unreleased]\n';
+            } else {
+              // Insert before first version
+              const beforeSection = changelog.substring(0, headerEnd);
+              const afterSection = changelog.substring(headerEnd);
+              changelog = beforeSection + '\n## [Unreleased]\n' + afterSection;
+            }
+          }
+          
+          // Find where to insert the change
+          const lines = changelog.split('\n');
+          let unreleasedIndex = lines.findIndex(line => line.includes('## [Unreleased]'));
+          let insertIndex = unreleasedIndex + 1;
+          
+          // Look for the appropriate subsection
+          let sectionFound = false;
+          for (let i = unreleasedIndex + 1; i < lines.length; i++) {
+            // Stop if we hit the next version section
+            if (lines[i].match(/^## \[/)) {
+              break;
+            }
+            
+            // Check if this is our section
+            if (lines[i] === changeType) {
+              // Found the section, add entry after it
+              insertIndex = i + 1;
+              // Skip empty lines
+              while (insertIndex < lines.length && lines[insertIndex].trim() === '') {
+                insertIndex++;
+              }
+              sectionFound = true;
+              break;
+            }
+            
+            // Keep track of where we are for section ordering
+            if (lines[i].startsWith('### ')) {
+              insertIndex = i;
+            }
+          }
+          
+          // If section wasn't found, add it
+          if (!sectionFound) {
+            // Find the right place to insert the section (maintain section order)
+            const sectionOrder = [
+              '### ⚠️ Breaking Changes',
+              '### Security',
+              '### Added',
+              '### Changed',
+              '### Fixed',
+              '### Deprecated',
+              '### Removed',
+              '### Documentation'
+            ];
+            
+            const currentSectionIndex = sectionOrder.indexOf(changeType);
+            let inserted = false;
+            
+            for (let i = unreleasedIndex + 1; i < lines.length; i++) {
+              if (lines[i].match(/^## \[/)) {
+                // Hit next version, insert here
+                lines.splice(i, 0, '', changeType, changeEntry);
+                inserted = true;
+                break;
+              }
+              
+              const lineSectionIndex = sectionOrder.findIndex(s => lines[i] === s);
+              if (lineSectionIndex > currentSectionIndex && lineSectionIndex !== -1) {
+                // Found a section that should come after ours
+                lines.splice(i, 0, '', changeType, changeEntry);
+                inserted = true;
+                break;
+              }
+            }
+            
+            if (!inserted) {
+              // Add at the end of unreleased section
+              let endIndex = unreleasedIndex + 1;
+              while (endIndex < lines.length && !lines[endIndex].match(/^## \[/)) {
+                endIndex++;
+              }
+              lines.splice(endIndex, 0, '', changeType, changeEntry);
+            }
+          } else {
+            // Add entry to existing section
+            lines.splice(insertIndex, 0, changeEntry);
+          }
+          
+          // Write updated changelog
+          const updatedChangelog = lines.join('\n');
+          fs.writeFileSync(changelogPath, updatedChangelog);
+          
+          console.log(`Added entry to ${changeType}: ${changeEntry}`);
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Check if there are changes
+        if git diff --quiet; then
+          echo "No changes to CHANGELOG.md"
+          exit 0
+        fi
+        
+        git add CHANGELOG.md
+        git commit -m "docs: update CHANGELOG.md for PR #${{ github.event.pull_request.number }} [skip ci]"
+        git push
