@@ -207,8 +207,8 @@ public final class Usage {
         sb.append("- Cost factor should increase over time as hardware improves\n\n");
 
         // Dependencies
-        String groupId = "com.lucimber.crypto";
-        String artifactId = "bcrypt";
+        String groupId = "com.lucimber";
+        String artifactId = "lucimber-bcrypt";
 
         sb.append("Maven Dependency:\n");
         sb.append("-----------------\n");
@@ -277,16 +277,18 @@ public final class Usage {
         System.out.println();
         System.out.println("Maven dependency:");
         System.out.println("  <dependency>");
-        System.out.println("    <groupId>com.lucimber.crypto</groupId>");
-        System.out.println("    <artifactId>bcrypt</artifactId>");
+        System.out.println("    <groupId>com.lucimber</groupId>");
+        System.out.println("    <artifactId>lucimber-bcrypt</artifactId>");
         System.out.println("    <version>" + version + "</version>");
         System.out.println("  </dependency>");
         System.out.println();
         System.out.println("Gradle dependency:");
-        System.out.println("  implementation 'com.lucimber.crypto:bcrypt:" + version + "'");
+        System.out.println("  implementation 'com.lucimber:lucimber-bcrypt:" + version + "'");
         System.out.println();
         System.out.println(
-                "For full API documentation, run: java -jar bcrypt-" + version + ".jar --help");
+                "For full API documentation, run: java -jar lucimber-bcrypt-"
+                        + version
+                        + ".jar --help");
         System.out.println("For detailed documentation, see the Javadoc or visit:");
         System.out.println("https://github.com/lucimber/bcrypt-java");
     }

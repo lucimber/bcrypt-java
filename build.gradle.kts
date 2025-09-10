@@ -4,7 +4,7 @@ plugins {
     id("com.diffplug.spotless") version "7.2.1"
 }
 
-group = "com.lucimber.crypto"
+group = "com.lucimber"
 version = "1.0.0"
 
 java {
@@ -61,6 +61,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            artifactId = "lucimber-bcrypt"
         }
     }
 }
