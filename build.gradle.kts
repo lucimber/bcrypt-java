@@ -44,9 +44,9 @@ tasks.jar {
     manifest {
         attributes(
             mapOf(
-                "Main-Class" to "com.lucimber.crypto.bcrypt.Usage",
-                "API-Entry-Point" to "com.lucimber.crypto.bcrypt.BCryptService",
-                "API-Documentation" to "com.lucimber.crypto.bcrypt.Usage",
+                "Main-Class" to "com.lucimber.bcrypt.Usage",
+                "API-Entry-Point" to "com.lucimber.bcrypt.BCryptService",
+                "API-Documentation" to "com.lucimber.bcrypt.Usage",
                 "Implementation-Title" to "BCrypt Java",
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "Lucimber",

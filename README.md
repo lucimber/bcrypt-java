@@ -35,7 +35,7 @@ dependencies {
 ### Basic Usage
 
 ```java
-import com.lucimber.crypto.bcrypt.*;
+import com.lucimber.bcrypt.*;
 
 // Get the service instance
 BCryptService bcryptService = BCryptService.getInstance();

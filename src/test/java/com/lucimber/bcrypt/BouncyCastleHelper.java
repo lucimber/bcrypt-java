@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Lucimber UG
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.lucimber.crypto.bcrypt;
+package com.lucimber.bcrypt;
 
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 
