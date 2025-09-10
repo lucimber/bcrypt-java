@@ -89,11 +89,39 @@ public final class Usage {
     }
 
     /**
+     * Retrieves the API summary text from the JAR's META-INF directory.
+     *
+     * @return the API summary text, or a fallback message if not found
+     */
+    public static String getApiSummary() {
+        try (java.io.InputStream is =
+                Usage.class.getResourceAsStream("/META-INF/API-SUMMARY.txt")) {
+            if (is != null) {
+                return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            }
+        } catch (java.io.IOException e) {
+            // Fallback if resource cannot be read
+        }
+        return "API Summary not available. Please refer to the documentation.";
+    }
+
+    /** Prints the API summary to standard output. */
+    public static void printApiSummary() {
+        System.out.println(getApiSummary());
+    }
+
+    /**
      * Main method providing usage information when JAR is executed directly.
      *
-     * @param args command line arguments (unused)
+     * @param args command line arguments - use "--help" or "-h" to show full API summary
      */
     public static void main(String[] args) {
+        // Check if user wants the full API summary/help
+        if (args.length > 0 && (args[0].equals("--help") || args[0].equals("-h"))) {
+            printApiSummary();
+            return;
+        }
+
         System.out.println("BCrypt Java Library v1.0.0");
         System.out.println("=========================");
         System.out.println();
@@ -116,6 +144,7 @@ public final class Usage {
         System.out.println("Gradle dependency:");
         System.out.println("  implementation 'com.lucimber.crypto:bcrypt:1.0.0'");
         System.out.println();
+        System.out.println("For full API documentation, run: java -jar bcrypt-1.0.0.jar --help");
         System.out.println("For detailed documentation, see the Javadoc or visit:");
         System.out.println("https://github.com/lucimber/bcrypt-java");
     }
