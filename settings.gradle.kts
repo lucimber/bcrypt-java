@@ -1,1 +1,1 @@
-rootProject.name = "bcrypt"
+rootProject.name = "lucimber-bcrypt"

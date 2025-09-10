@@ -19,15 +19,15 @@ A zero-dependency, pure Java implementation of the BCrypt password hashing algor
 #### Gradle
 ```gradle
 dependencies {
-    implementation 'com.lucimber.crypto:bcrypt:1.0.0'
+    implementation 'com.lucimber:lucimber-bcrypt:1.0.0'
 }
 ```
 
 #### Maven
 ```xml
 <dependency>
-    <groupId>com.lucimber.crypto</groupId>
-    <artifactId>bcrypt</artifactId>
+    <groupId>com.lucimber</groupId>
+    <artifactId>lucimber-bcrypt</artifactId>
     <version>1.0.0</version>
 </dependency>
 ```
