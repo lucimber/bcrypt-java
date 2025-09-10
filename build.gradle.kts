@@ -40,6 +40,23 @@ tasks.javadoc {
     (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
 }
 
+tasks.jar {
+    manifest {
+        attributes(
+            mapOf(
+                "Main-Class" to "com.lucimber.crypto.bcrypt.Usage",
+                "API-Entry-Point" to "com.lucimber.crypto.bcrypt.BCryptService",
+                "API-Documentation" to "com.lucimber.crypto.bcrypt.Usage",
+                "Implementation-Title" to "BCrypt Java",
+                "Implementation-Version" to project.version,
+                "Implementation-Vendor" to "Lucimber",
+                "Built-By" to System.getProperty("user.name"),
+                "Built-JDK" to System.getProperty("java.version"),
+            ),
+        )
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
