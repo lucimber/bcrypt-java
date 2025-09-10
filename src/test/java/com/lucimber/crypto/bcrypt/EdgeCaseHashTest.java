@@ -16,8 +16,6 @@ class EdgeCaseHashTest {
     @Test
     @DisplayName("Should handle malformed hash strings gracefully")
     void shouldHandleMalformedHashStringsGracefully() {
-        Password password = new Password("test");
-
         // Various malformed hashes
         String[] malformedHashes = {
             "$2a$10$", // Too short
@@ -136,21 +134,55 @@ class EdgeCaseHashTest {
     @Test
     @DisplayName("Should validate salt and hash length in hash string")
     void shouldValidateSaltAndHashLengthInHashString() {
-        // Valid hash has exactly 53 characters after the cost factor
+        // BCrypt format: $version$cost$[22 char salt][31 char hash]
+        // Total after last $: 53 characters (22 salt + 31 hash)
         String validHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
         Hash hash = new Hash(validHash);
 
-        // Extract the salt and hash portion
+        // Verify the salt and hash components
+        assertEquals(22, hash.getSalt().length(), "Salt should be 22 characters");
+        assertEquals(31, hash.getHashPortion().length(), "Hash portion should be 31 characters");
+
+        // Extract the full encoded portion after cost factor
         String saltAndHash = validHash.substring(validHash.lastIndexOf('$') + 1);
-        assertEquals(53, saltAndHash.length());
+        assertEquals(53, saltAndHash.length(), "Total salt+hash should be 53 characters");
 
-        // Test that slightly different lengths are rejected
-        String tooShortHash =
-                "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhW"; // 52 chars
-        assertThrows(IllegalArgumentException.class, () -> new Hash(tooShortHash));
+        // Test various invalid lengths
 
-        String tooLongHash =
-                "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWyX"; // 54 chars
-        assertThrows(IllegalArgumentException.class, () -> new Hash(tooLongHash));
+        // 52 chars - one character too short
+        String tooShortBy1 = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhW";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Hash(tooShortBy1),
+                "Should reject hash with 52 characters");
+
+        // 54 chars - one character too long
+        String tooLongBy1 = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWyX";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Hash(tooLongBy1),
+                "Should reject hash with 54 characters");
+
+        // 40 chars - significantly too short (missing hash portion)
+        String onlySaltPortion = "$2a$10$N9qo8uLOickgx2ZMRZoMye";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Hash(onlySaltPortion),
+                "Should reject hash with only salt portion");
+
+        // 60 chars - significantly too long
+        String wayTooLong = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWyEXTRAxtra";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Hash(wayTooLong),
+                "Should reject hash with extra characters");
+
+        // Test edge case with valid BCrypt Base64 characters but wrong length
+        String validCharsWrongLength =
+                "$2a$10$abcdefghijklmnopqrstuABCDEFGHIJKLMNOPQRSTUVWXYZ01234";
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new Hash(validCharsWrongLength),
+                "Should reject hash with valid chars but wrong length");
     }
 }
