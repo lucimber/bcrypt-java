@@ -2,19 +2,16 @@ package com.lucimber.crypto.bcrypt;
 
 import java.security.SecureRandom;
 
-/**
- * BCrypt engine implementation.
- * Core cryptographic operations for BCrypt password hashing.
- */
+/** BCrypt engine implementation. Core cryptographic operations for BCrypt password hashing. */
 final class BCryptEngine {
-    
+
     // BCrypt parameters
     private static final int GENSALT_DEFAULT_LOG2_ROUNDS = 10;
     private static final int BCRYPT_SALT_LEN = 16;
-    
+
     // Blowfish parameters
     private static final int BLOWFISH_NUM_ROUNDS = 16;
-    
+
     // Initial contents of key schedule
     private static final int[] P_orig = {
         0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,
@@ -23,7 +20,7 @@ final class BCryptEngine {
         0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917,
         0x9216d5d9, 0x8979fb1b
     };
-    
+
     private static final int[] S_orig = {
         0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
         0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,
@@ -282,13 +279,13 @@ final class BCryptEngine {
         0x90d4f869, 0xa65cdea0, 0x3f09252d, 0xc208e69f,
         0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6
     };
-    
+
     // BCrypt magic string
     private static final int[] bf_crypt_ciphertext = {
         0x4f727068, 0x65616e42, 0x65686f6c,
         0x64657253, 0x63727944, 0x6f756274
     };
-    
+
     // Tables for the modified base64
     private static final char[] base64_code = {
         '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
@@ -298,35 +295,26 @@ final class BCryptEngine {
         'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
         '6', '7', '8', '9'
     };
-    
+
     private static final byte[] index_64 = {
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, 0, 1, 54, 55,
-        56, 57, 58, 59, 60, 61, 62, 63, -1, -1,
-        -1, -1, -1, -1, -1, 2, 3, 4, 5, 6,
-        7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-        -1, -1, -1, -1, -1, -1, 28, 29, 30,
-        31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-        41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-        51, 52, 53, -1, -1, -1, -1, -1
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        0, 1, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, -1, -1, -1, -1, -1, -1, -1, 2, 3, 4, 5, 6, 7,
+        8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1,
+        -1, -1, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+        48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1
     };
-    
+
     // State
     private int[] P;
     private int[] S;
-    
-    /**
-     * Encode a byte array using bcrypt's slightly-modified base64 encoding scheme.
-     */
+
+    /** Encode a byte array using bcrypt's slightly-modified base64 encoding scheme. */
     private static String encode_base64(byte[] d, int len) {
         int off = 0;
         StringBuilder rs = new StringBuilder();
         int c1, c2;
-        
+
         while (off < len) {
             c1 = d[off++] & 0xff;
             rs.append(base64_code[(c1 >> 2) & 0x3f]);
@@ -350,67 +338,56 @@ final class BCryptEngine {
         }
         return rs.toString();
     }
-    
-    /**
-     * Look up the 3 bits base64-encoded by the specified character.
-     */
+
+    /** Look up the 3 bits base64-encoded by the specified character. */
     private static byte char64(char x) {
-        if ((int)x >= index_64.length)
-            return -1;
-        return index_64[(int)x];
+        if ((int) x >= index_64.length) return -1;
+        return index_64[(int) x];
     }
-    
-    /**
-     * Decode a string encoded using bcrypt's base64 scheme to a byte array.
-     */
+
+    /** Decode a string encoded using bcrypt's base64 scheme to a byte array. */
     static byte[] decode_base64(String s, int maxolen) {
         byte[] ret = new byte[maxolen];
         int off = 0, slen = s.length(), olen = 0;
         byte c1, c2, c3, c4, o;
-        
+
         while (off < slen - 1 && olen < maxolen) {
             c1 = char64(s.charAt(off++));
             c2 = char64(s.charAt(off++));
-            if (c1 == -1 || c2 == -1)
-                break;
-            o = (byte)(c1 << 2);
+            if (c1 == -1 || c2 == -1) break;
+            o = (byte) (c1 << 2);
             o |= (c2 & 0x30) >> 4;
             ret[olen++] = o;
-            if (olen >= maxolen || off >= slen)
-                break;
+            if (olen >= maxolen || off >= slen) break;
             c3 = char64(s.charAt(off++));
-            if (c3 == -1)
-                break;
-            o = (byte)((c2 & 0x0f) << 4);
+            if (c3 == -1) break;
+            o = (byte) ((c2 & 0x0f) << 4);
             o |= (c3 & 0x3c) >> 2;
             ret[olen++] = o;
-            if (olen >= maxolen || off >= slen)
-                break;
+            if (olen >= maxolen || off >= slen) break;
             c4 = char64(s.charAt(off++));
-            o = (byte)((c3 & 0x03) << 6);
+            o = (byte) ((c3 & 0x03) << 6);
             o |= c4;
             ret[olen++] = o;
         }
-        
+
         byte[] result = new byte[olen];
         System.arraycopy(ret, 0, result, 0, olen);
         return result;
     }
-    
-    /**
-     * Blowfish encipher a single 64-bit block encoded as two 32-bit halves.
-     */
+
+    /** Blowfish encipher a single 64-bit block encoded as two 32-bit halves. */
     private void encipher(int[] lr, int off) {
         int i, n, l = lr[off], r = lr[off + 1];
-        
+
         l ^= P[0];
-        for (i = 0; i <= BLOWFISH_NUM_ROUNDS - 2;) {
+        for (i = 0; i <= BLOWFISH_NUM_ROUNDS - 2; ) {
             n = S[(l >> 24) & 0xff];
             n += S[0x100 | ((l >> 16) & 0xff)];
             n ^= S[0x200 | ((l >> 8) & 0xff)];
             n += S[0x300 | (l & 0xff)];
             r ^= n ^ P[++i];
-            
+
             n = S[(r >> 24) & 0xff];
             n += S[0x100 | ((r >> 16) & 0xff)];
             n ^= S[0x200 | ((r >> 8) & 0xff)];
@@ -420,71 +397,61 @@ final class BCryptEngine {
         lr[off] = r ^ P[BLOWFISH_NUM_ROUNDS + 1];
         lr[off + 1] = l;
     }
-    
-    /**
-     * Cyclically extract a word of key material.
-     */
+
+    /** Cyclically extract a word of key material. */
     private int streamtoword(byte[] data, int[] offp) {
         int i;
         int word = 0;
         int off = offp[0];
-        
+
         for (i = 0; i < 4; i++) {
             word = (word << 8) | (data[off] & 0xff);
             off = (off + 1) % data.length;
         }
-        
+
         offp[0] = off;
         return word;
     }
-    
-    /**
-     * Initialize the Blowfish key schedule.
-     */
+
+    /** Initialize the Blowfish key schedule. */
     private void init_key() {
         P = new int[P_orig.length];
         System.arraycopy(P_orig, 0, P, 0, P_orig.length);
         S = new int[S_orig.length];
         System.arraycopy(S_orig, 0, S, 0, S_orig.length);
     }
-    
-    /**
-     * Key the Blowfish cipher.
-     */
+
+    /** Key the Blowfish cipher. */
     private void key(byte[] key) {
         int i;
-        int[] koffp = { 0 };
-        int[] lr = { 0, 0 };
+        int[] koffp = {0};
+        int[] lr = {0, 0};
         int plen = P.length, slen = S.length;
-        
-        for (i = 0; i < plen; i++)
-            P[i] = P[i] ^ streamtoword(key, koffp);
-        
+
+        for (i = 0; i < plen; i++) P[i] = P[i] ^ streamtoword(key, koffp);
+
         for (i = 0; i < plen - 1; i += 2) {
             encipher(lr, 0);
             P[i] = lr[0];
             P[i + 1] = lr[1];
         }
-        
+
         for (i = 0; i < slen - 1; i += 2) {
             encipher(lr, 0);
             S[i] = lr[0];
             S[i + 1] = lr[1];
         }
     }
-    
-    /**
-     * Perform the "enhanced key schedule" step described by Provos and Mazieres.
-     */
+
+    /** Perform the "enhanced key schedule" step described by Provos and Mazieres. */
     private void ekskey(byte[] salt, byte[] key) {
         int i;
-        int[] koffp = { 0 }, soffp = { 0 };
-        int[] lr = { 0, 0 };
+        int[] koffp = {0}, soffp = {0};
+        int[] lr = {0, 0};
         int plen = P.length, slen = S.length;
-        
-        for (i = 0; i < plen; i++)
-            P[i] = P[i] ^ streamtoword(key, koffp);
-        
+
+        for (i = 0; i < plen; i++) P[i] = P[i] ^ streamtoword(key, koffp);
+
         for (i = 0; i < plen - 1; i += 2) {
             lr[0] ^= streamtoword(salt, soffp);
             lr[1] ^= streamtoword(salt, soffp);
@@ -492,7 +459,7 @@ final class BCryptEngine {
             P[i] = lr[0];
             P[i + 1] = lr[1];
         }
-        
+
         for (i = 0; i < slen - 1; i += 2) {
             lr[0] ^= streamtoword(salt, soffp);
             lr[1] ^= streamtoword(salt, soffp);
@@ -501,115 +468,99 @@ final class BCryptEngine {
             S[i + 1] = lr[1];
         }
     }
-    
-    /**
-     * Perform the central hashing step in the bcrypt scheme.
-     */
+
+    /** Perform the central hashing step in the bcrypt scheme. */
     private byte[] crypt_raw(byte[] password, byte[] salt, int log_rounds) {
         int[] cdata = new int[bf_crypt_ciphertext.length];
         System.arraycopy(bf_crypt_ciphertext, 0, cdata, 0, bf_crypt_ciphertext.length);
-        
+
         int rounds = 1 << log_rounds;
-        
+
         init_key();
         ekskey(salt, password);
-        
+
         for (int i = 0; i < rounds; i++) {
             key(password);
             key(salt);
         }
-        
+
         for (int i = 0; i < 64; i++) {
-            for (int j = 0; j < (cdata.length >> 1); j++)
-                encipher(cdata, j << 1);
+            for (int j = 0; j < (cdata.length >> 1); j++) encipher(cdata, j << 1);
         }
-        
+
         byte[] ret = new byte[cdata.length * 4];
         for (int i = 0, j = 0; i < cdata.length; i++) {
-            ret[j++] = (byte)((cdata[i] >> 24) & 0xff);
-            ret[j++] = (byte)((cdata[i] >> 16) & 0xff);
-            ret[j++] = (byte)((cdata[i] >> 8) & 0xff);
-            ret[j++] = (byte)(cdata[i] & 0xff);
+            ret[j++] = (byte) ((cdata[i] >> 24) & 0xff);
+            ret[j++] = (byte) ((cdata[i] >> 16) & 0xff);
+            ret[j++] = (byte) ((cdata[i] >> 8) & 0xff);
+            ret[j++] = (byte) (cdata[i] & 0xff);
         }
         return ret;
     }
-    
-    /**
-     * Hash a password using the BCrypt algorithm.
-     */
+
+    /** Hash a password using the BCrypt algorithm. */
     static String hashpw(String password, String salt) {
         String real_salt;
         byte[] passwordb, saltb, hashed;
-        char minor = (char)0;
+        char minor = (char) 0;
         int rounds, off = 0;
         StringBuilder rs = new StringBuilder();
-        
+
         if (salt.charAt(0) != '$' || salt.charAt(1) != '2')
             throw new IllegalArgumentException("Invalid salt version");
-        if (salt.charAt(2) == '$')
-            off = 3;
+        if (salt.charAt(2) == '$') off = 3;
         else {
             minor = salt.charAt(2);
             if (minor != 'a' && minor != 'b' || salt.charAt(3) != '$')
                 throw new IllegalArgumentException("Invalid salt revision");
             off = 4;
         }
-        
+
         // Extract number of rounds
-        if (salt.charAt(off + 2) > '$')
-            throw new IllegalArgumentException("Missing salt rounds");
+        if (salt.charAt(off + 2) > '$') throw new IllegalArgumentException("Missing salt rounds");
         rounds = Integer.parseInt(salt.substring(off, off + 2));
-        
+
         real_salt = salt.substring(off + 3, off + 25);
         passwordb = (password + "\000").getBytes();
-        
+
         saltb = decode_base64(real_salt, BCRYPT_SALT_LEN);
-        
+
         BCryptEngine engine = new BCryptEngine();
         hashed = engine.crypt_raw(passwordb, saltb, rounds);
-        
+
         rs.append("$2");
-        if (minor >= 'a')
-            rs.append(minor);
+        if (minor >= 'a') rs.append(minor);
         rs.append("$");
-        if (rounds < 10)
-            rs.append("0");
+        if (rounds < 10) rs.append("0");
         rs.append(Integer.toString(rounds));
         rs.append("$");
         rs.append(encode_base64(saltb, saltb.length));
         rs.append(encode_base64(hashed, bf_crypt_ciphertext.length * 4 - 1));
         return rs.toString();
     }
-    
-    /**
-     * Generate a salt for use with hashpw().
-     */
+
+    /** Generate a salt for use with hashpw(). */
     static String gensalt(int log_rounds) {
         return gensalt(log_rounds, new SecureRandom());
     }
-    
-    /**
-     * Generate a salt for use with hashpw().
-     */
+
+    /** Generate a salt for use with hashpw(). */
     static String gensalt(int log_rounds, SecureRandom random) {
         StringBuilder rs = new StringBuilder();
         byte[] rnd = new byte[BCRYPT_SALT_LEN];
-        
+
         random.nextBytes(rnd);
-        
+
         rs.append("$2a$");
-        if (log_rounds < 10)
-            rs.append("0");
+        if (log_rounds < 10) rs.append("0");
         rs.append(Integer.toString(log_rounds));
         rs.append("$");
         rs.append(encode_base64(rnd, rnd.length));
-        
+
         return rs.toString();
     }
-    
-    /**
-     * Check that a plaintext password matches a previously hashed one.
-     */
+
+    /** Check that a plaintext password matches a previously hashed one. */
     static boolean checkpw(String plaintext, String hashed) {
         return hashed.equals(hashpw(plaintext, hashed));
     }
