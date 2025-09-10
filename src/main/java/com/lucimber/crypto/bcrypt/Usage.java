@@ -89,20 +89,156 @@ public final class Usage {
     }
 
     /**
-     * Retrieves the API summary text from the JAR's META-INF directory.
+     * Dynamically generates the API summary from the library's actual components.
      *
-     * @return the API summary text, or a fallback message if not found
+     * @return the complete API summary text
      */
     public static String getApiSummary() {
-        try (java.io.InputStream is =
-                Usage.class.getResourceAsStream("/META-INF/API-SUMMARY.txt")) {
-            if (is != null) {
-                return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            }
-        } catch (java.io.IOException e) {
-            // Fallback if resource cannot be read
+        StringBuilder sb = new StringBuilder();
+
+        // Header with version from package or manifest
+        String version = getVersion();
+        sb.append("BCrypt Library v").append(version).append("\n");
+        sb.append("=".repeat(21 + version.length())).append("\n");
+        sb.append("Pure Java BCrypt implementation with zero runtime dependencies\n");
+        sb.append("Compatible with Spring Security and Bouncy Castle\n\n");
+
+        sb.append("Main Entry Point: ").append(BCryptService.class.getName()).append("\n");
+        sb.append("=".repeat(60)).append("\n\n");
+
+        // Quick Start
+        sb.append("Quick Start:\n");
+        sb.append("------------\n");
+        sb.append("1. Get service instance: BCryptService.getInstance()\n");
+        sb.append("2. Hash password: service.hash(new Password(\"secret\"))\n");
+        sb.append("3. Verify password: service.verify(password, hash)\n\n");
+
+        // Key Classes
+        sb.append("Key Classes:\n");
+        sb.append("------------\n");
+
+        // BCryptService
+        sb.append("- ")
+                .append(BCryptService.class.getSimpleName())
+                .append(": Main service class (singleton)\n");
+        sb.append("  * hash(Password) -> Hash\n");
+        sb.append("  * hash(Password, BCryptVersion) -> Hash\n");
+        sb.append("  * hash(Password, BCryptVersion, CostFactor) -> Hash\n");
+        sb.append("  * hash(Password, BCryptVersion, CostFactor, Salt) -> Hash\n");
+        sb.append("  * verify(Password, Hash) -> boolean\n\n");
+
+        // Password
+        sb.append("- ")
+                .append(Password.class.getSimpleName())
+                .append(": Secure password wrapper\n");
+        sb.append("  * new Password(String)\n");
+        sb.append("  * new Password(char[])\n");
+        sb.append("  * getBytes() -> byte[] (truncated at 72 bytes)\n");
+        sb.append("  * clear() -> void (zeroes memory)\n\n");
+
+        // Hash
+        sb.append("- ").append(Hash.class.getSimpleName()).append(": BCrypt hash representation\n");
+        sb.append("  * new Hash(String) - parse hash string\n");
+        sb.append("  * getValue() -> String (full hash)\n");
+        sb.append("  * getSalt() -> String (22 chars)\n");
+        sb.append("  * getHashPortion() -> String (31 chars)\n");
+        sb.append("  * getCostFactor() -> CostFactor\n");
+        sb.append("  * getVersion() -> BCryptVersion\n\n");
+
+        // Salt
+        sb.append("- ").append(Salt.class.getSimpleName()).append(": 16-byte salt value\n");
+        sb.append("  * generateRandom() -> Salt\n");
+        sb.append("  * new Salt(byte[16])\n");
+        sb.append("  * toBCryptString() -> String (22 chars)\n");
+        sb.append("  * fromBCryptString(String) -> Salt\n\n");
+
+        // CostFactor
+        sb.append("- ")
+                .append(CostFactor.class.getSimpleName())
+                .append(": Work factor configuration\n");
+        sb.append("  * new CostFactor(int) - range: ")
+                .append(CostFactor.MIN_COST)
+                .append("-")
+                .append(CostFactor.MAX_COST)
+                .append("\n");
+        sb.append("  * getValue() -> int\n");
+        sb.append("  * Default: ").append(CostFactor.DEFAULT_COST).append("\n\n");
+
+        // BCryptVersion
+        sb.append("- ").append(BCryptVersion.class.getSimpleName()).append(": Algorithm version\n");
+        for (BCryptVersion v : BCryptVersion.values()) {
+            sb.append("  * ").append(v.name()).append(" - ").append(v.getPrefix()).append("\n");
         }
-        return "API Summary not available. Please refer to the documentation.";
+        sb.append("\n");
+
+        // Examples
+        sb.append("Examples:\n");
+        sb.append("---------\n");
+        sb.append("// Simple usage with defaults\n");
+        sb.append("BCryptService service = BCryptService.getInstance();\n");
+        sb.append("Password pwd = new Password(\"myPassword\");\n");
+        sb.append("Hash hash = service.hash(pwd);\n");
+        sb.append("boolean valid = service.verify(pwd, hash);\n\n");
+
+        sb.append("// Advanced usage with custom settings\n");
+        sb.append("CostFactor cost = new CostFactor(12);\n");
+        sb.append("Hash strongHash = service.hash(pwd, BCryptVersion.VERSION_2B, cost);\n\n");
+
+        sb.append("// Verify existing hash\n");
+        sb.append(
+                "String hashString ="
+                        + " \"$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy\";\n");
+        sb.append("Hash existingHash = new Hash(hashString);\n");
+        sb.append(
+                "boolean isValid = service.verify(new Password(\"password\"), existingHash);\n\n");
+
+        // Security Notes
+        sb.append("Security Notes:\n");
+        sb.append("---------------\n");
+        sb.append("- Passwords are automatically truncated at 72 bytes (BCrypt spec)\n");
+        sb.append("- Empty passwords are rejected (throws IllegalArgumentException)\n");
+        sb.append("- Use Password.clear() to zero sensitive memory after use\n");
+        sb.append("- Higher cost factors = better security but slower (2^cost iterations)\n");
+        sb.append("- Cost factor 10-12 recommended for most applications\n");
+        sb.append("- Cost factor should increase over time as hardware improves\n\n");
+
+        // Dependencies
+        String groupId = "com.lucimber.crypto";
+        String artifactId = "bcrypt";
+
+        sb.append("Maven Dependency:\n");
+        sb.append("-----------------\n");
+        sb.append("<dependency>\n");
+        sb.append("    <groupId>").append(groupId).append("</groupId>\n");
+        sb.append("    <artifactId>").append(artifactId).append("</artifactId>\n");
+        sb.append("    <version>").append(version).append("</version>\n");
+        sb.append("</dependency>\n\n");
+
+        sb.append("Gradle Dependency:\n");
+        sb.append("------------------\n");
+        sb.append("implementation '")
+                .append(groupId)
+                .append(":")
+                .append(artifactId)
+                .append(":")
+                .append(version)
+                .append("'\n\n");
+
+        sb.append("License: Apache 2.0\n");
+        sb.append("GitHub: https://github.com/lucimber/bcrypt-java\n");
+
+        return sb.toString();
+    }
+
+    /**
+     * Gets the library version from the package implementation version or a default.
+     *
+     * @return the version string
+     */
+    private static String getVersion() {
+        Package pkg = BCryptService.class.getPackage();
+        String version = pkg != null ? pkg.getImplementationVersion() : null;
+        return version != null ? version : "1.0.0";
     }
 
     /** Prints the API summary to standard output. */
@@ -122,8 +258,9 @@ public final class Usage {
             return;
         }
 
-        System.out.println("BCrypt Java Library v1.0.0");
-        System.out.println("=========================");
+        String version = getVersion();
+        System.out.println("BCrypt Java Library v" + version);
+        System.out.println("=".repeat(23 + version.length()));
         System.out.println();
         System.out.println("A pure Java implementation of BCrypt password hashing");
         System.out.println();
@@ -138,13 +275,14 @@ public final class Usage {
         System.out.println("  <dependency>");
         System.out.println("    <groupId>com.lucimber.crypto</groupId>");
         System.out.println("    <artifactId>bcrypt</artifactId>");
-        System.out.println("    <version>1.0.0</version>");
+        System.out.println("    <version>" + version + "</version>");
         System.out.println("  </dependency>");
         System.out.println();
         System.out.println("Gradle dependency:");
-        System.out.println("  implementation 'com.lucimber.crypto:bcrypt:1.0.0'");
+        System.out.println("  implementation 'com.lucimber.crypto:bcrypt:" + version + "'");
         System.out.println();
-        System.out.println("For full API documentation, run: java -jar bcrypt-1.0.0.jar --help");
+        System.out.println(
+                "For full API documentation, run: java -jar bcrypt-" + version + ".jar --help");
         System.out.println("For detailed documentation, see the Javadoc or visit:");
         System.out.println("https://github.com/lucimber/bcrypt-java");
     }
