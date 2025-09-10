@@ -72,6 +72,9 @@ spotless {
         // Target all Java source files
         target("src/**/*.java")
 
+        // License header
+        licenseHeaderFile(rootProject.file("LICENSE.header"))
+
         // Remove unused imports
         removeUnusedImports()
 
