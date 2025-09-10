@@ -1,0 +1,93 @@
+BCrypt Library v1.0.0
+=====================
+Pure Java BCrypt implementation with zero runtime dependencies
+Compatible with Spring Security and Bouncy Castle
+
+Main Entry Point: com.lucimber.crypto.bcrypt.BCryptService
+============================================================
+
+Quick Start:
+------------
+1. Get service instance: BCryptService.getInstance()
+2. Hash password: service.hash(new Password("secret"))
+3. Verify password: service.verify(password, hash)
+
+Key Classes:
+------------
+- BCryptService: Main service class (singleton)
+  * hash(Password) -> Hash
+  * hash(Password, BCryptVersion) -> Hash
+  * hash(Password, BCryptVersion, CostFactor) -> Hash
+  * hash(Password, BCryptVersion, CostFactor, Salt) -> Hash
+  * verify(Password, Hash) -> boolean
+
+- Password: Secure password wrapper
+  * new Password(String)
+  * new Password(char[])
+  * getBytes() -> byte[] (truncated at 72 bytes)
+  * clear() -> void (zeroes memory)
+
+- Hash: BCrypt hash representation
+  * new Hash(String) - parse hash string
+  * getValue() -> String (full hash)
+  * getSalt() -> String (22 chars)
+  * getHashPortion() -> String (31 chars)
+  * getCostFactor() -> CostFactor
+  * getVersion() -> BCryptVersion
+
+- Salt: 16-byte salt value
+  * generateRandom() -> Salt
+  * new Salt(byte[16])
+  * toBCryptString() -> String (22 chars)
+  * fromBCryptString(String) -> Salt
+
+- CostFactor: Work factor configuration
+  * new CostFactor(int) - range: 4-31
+  * getValue() -> int
+  * Default: 10
+
+- BCryptVersion: Algorithm version
+  * VERSION_2A - Original version
+  * VERSION_2B - Fixed UTF-8 handling
+  * VERSION_2Y - PHP compatibility
+
+Examples:
+---------
+// Simple usage with defaults
+BCryptService service = BCryptService.getInstance();
+Password pwd = new Password("myPassword");
+Hash hash = service.hash(pwd);
+boolean valid = service.verify(pwd, hash);
+
+// Advanced usage with custom settings
+CostFactor cost = new CostFactor(12);
+Hash strongHash = service.hash(pwd, BCryptVersion.VERSION_2B, cost);
+
+// Verify Spring Security hash
+String springHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy";
+Hash existingHash = new Hash(springHash);
+boolean isValid = service.verify(new Password("password"), existingHash);
+
+Security Notes:
+---------------
+- Passwords are automatically truncated at 72 bytes (BCrypt spec)
+- Empty passwords are rejected (throws IllegalArgumentException)
+- Use Password.clear() to zero sensitive memory after use
+- Higher cost factors = better security but slower (2^cost iterations)
+- Cost factor 10-12 recommended for most applications
+- Cost factor should increase over time as hardware improves
+
+Maven Dependency:
+-----------------
+<dependency>
+    <groupId>com.lucimber.crypto</groupId>
+    <artifactId>bcrypt</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+Gradle Dependency:
+------------------
+implementation 'com.lucimber.crypto:bcrypt:1.0.0'
+
+License: Apache 2.0
+GitHub: https://github.com/lucimber/bcrypt-java
