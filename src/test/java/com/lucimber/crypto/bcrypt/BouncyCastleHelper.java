@@ -1,18 +1,17 @@
 package com.lucimber.crypto.bcrypt;
 
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
-import java.nio.charset.StandardCharsets;
 
 /**
- * Helper class for Bouncy Castle BCrypt compatibility.
- * Bouncy Castle provides both low-level BCrypt.generate() and higher-level OpenBSDBCrypt.
+ * Helper class for Bouncy Castle BCrypt compatibility. Bouncy Castle provides both low-level
+ * BCrypt.generate() and higher-level OpenBSDBCrypt.
  */
 public class BouncyCastleHelper {
-    
+
     /**
-     * Generates a BCrypt hash using Bouncy Castle's OpenBSDBCrypt.
-     * This is the high-level API that handles all BCrypt details.
-     * 
+     * Generates a BCrypt hash using Bouncy Castle's OpenBSDBCrypt. This is the high-level API that
+     * handles all BCrypt details.
+     *
      * @param password the password to hash
      * @param salt the salt (16 bytes)
      * @param cost the cost factor
@@ -30,10 +29,10 @@ public class BouncyCastleHelper {
         }
         return hash;
     }
-    
+
     /**
      * Verifies a password against a BCrypt hash using Bouncy Castle.
-     * 
+     *
      * @param password the password to verify
      * @param hash the BCrypt hash
      * @return true if the password matches the hash
@@ -41,10 +40,10 @@ public class BouncyCastleHelper {
     public static boolean verifyWithBouncyCastle(String password, String hash) {
         return OpenBSDBCrypt.checkPassword(hash, password.toCharArray());
     }
-    
+
     /**
      * Generates a BCrypt hash using Bouncy Castle with a BCrypt-formatted salt string.
-     * 
+     *
      * @param password the password to hash
      * @param bcryptSalt BCrypt salt string (22 chars)
      * @param cost the cost factor
@@ -55,10 +54,10 @@ public class BouncyCastleHelper {
         byte[] saltBytes = decodeBCryptBase64(bcryptSalt);
         return hashWithBouncyCastle(password, saltBytes, cost);
     }
-    
+
     /**
      * Generates a BCrypt hash compatible with the given hash's parameters.
-     * 
+     *
      * @param password the password to hash
      * @param existingHash an existing hash to extract parameters from
      * @return the new BCrypt hash string
@@ -68,36 +67,37 @@ public class BouncyCastleHelper {
         if (!existingHash.startsWith("$2a$") && !existingHash.startsWith("$2b$")) {
             throw new IllegalArgumentException("Invalid BCrypt hash format");
         }
-        
+
         // Extract cost factor
         int costEnd = existingHash.indexOf('$', 4);
         int cost = Integer.parseInt(existingHash.substring(4, costEnd));
-        
+
         // Extract salt (22 chars after cost)
         String saltString = existingHash.substring(costEnd + 1, costEnd + 23);
-        
+
         return hashWithBCryptSalt(password, saltString, cost);
     }
-    
+
     // BCrypt Base64 decoding
-    private static final String BCRYPT_ALPHABET = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    
+    private static final String BCRYPT_ALPHABET =
+            "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
     private static byte[] decodeBCryptBase64(String s) {
         int len = s.length();
         byte[] bytes = new byte[16]; // BCrypt salt is always 16 bytes
         int byteIndex = 0;
-        
+
         for (int i = 0; i < len && byteIndex < 16; ) {
             int c1 = BCRYPT_ALPHABET.indexOf(s.charAt(i++));
             int c2 = (i < len) ? BCRYPT_ALPHABET.indexOf(s.charAt(i++)) : 0;
             int c3 = (i < len) ? BCRYPT_ALPHABET.indexOf(s.charAt(i++)) : 0;
             int c4 = (i < len) ? BCRYPT_ALPHABET.indexOf(s.charAt(i++)) : 0;
-            
+
             bytes[byteIndex++] = (byte) ((c1 << 2) | (c2 >> 4));
             if (byteIndex < 16) bytes[byteIndex++] = (byte) ((c2 << 4) | (c3 >> 2));
             if (byteIndex < 16) bytes[byteIndex++] = (byte) ((c3 << 6) | c4);
         }
-        
+
         return bytes;
     }
 }

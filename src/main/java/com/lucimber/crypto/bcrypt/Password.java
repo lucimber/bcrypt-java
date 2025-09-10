@@ -5,20 +5,19 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * Represents a plain text password as a value object.
- * This class ensures that passwords are handled securely and consistently.
- * The password is stored as a char array to allow for secure erasure from memory.
+ * Represents a plain text password as a value object. This class ensures that passwords are handled
+ * securely and consistently. The password is stored as a char array to allow for secure erasure
+ * from memory.
  */
 public final class Password {
     private static final int MAX_LENGTH_BYTES = 72; // BCrypt limitation
-    
+
     private final char[] value;
-    
+
     /**
-     * Creates a new Password from a character array.
-     * The array is cloned to prevent external modification.
-     * Passwords longer than 72 bytes will be truncated when used.
-     * 
+     * Creates a new Password from a character array. The array is cloned to prevent external
+     * modification. Passwords longer than 72 bytes will be truncated when used.
+     *
      * @param password the password characters
      * @throws IllegalArgumentException if password is null or empty
      */
@@ -31,25 +30,22 @@ public final class Password {
         // and truncate in getBytes()
         this.value = password.clone();
     }
-    
+
     /**
-     * Creates a new Password from a String.
-     * This method is provided for convenience but using char[] is preferred for security.
-     * Passwords longer than 72 bytes will be truncated when used.
-     * 
+     * Creates a new Password from a String. This method is provided for convenience but using
+     * char[] is preferred for security. Passwords longer than 72 bytes will be truncated when used.
+     *
      * @param password the password string
      * @throws IllegalArgumentException if password is null or empty
      */
     public Password(String password) {
         this(Objects.requireNonNull(password, "Password cannot be null").toCharArray());
     }
-    
-    
+
     /**
-     * Gets the password as a byte array encoded in UTF-8.
-     * BCrypt operates on bytes, not characters.
+     * Gets the password as a byte array encoded in UTF-8. BCrypt operates on bytes, not characters.
      * Passwords longer than 72 bytes are truncated to match BCrypt behavior.
-     * 
+     *
      * @return the password bytes, truncated to 72 bytes if necessary
      */
     public byte[] getBytes() {
@@ -61,25 +57,24 @@ public final class Password {
         }
         return bytes;
     }
-    
+
     /**
-     * Gets a copy of the password characters.
-     * The returned array is a copy to prevent external modification.
-     * 
+     * Gets a copy of the password characters. The returned array is a copy to prevent external
+     * modification.
+     *
      * @return a copy of the password characters
      */
     public char[] toCharArray() {
         return value.clone();
     }
-    
+
     /**
-     * Clears the password from memory.
-     * This should be called when the password is no longer needed.
+     * Clears the password from memory. This should be called when the password is no longer needed.
      */
     public void clear() {
         Arrays.fill(value, '\0');
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -87,12 +82,12 @@ public final class Password {
         Password password = (Password) obj;
         return Arrays.equals(value, password.value);
     }
-    
+
     @Override
     public int hashCode() {
         return Arrays.hashCode(value);
     }
-    
+
     @Override
     public String toString() {
         return "Password{length=" + value.length + "}";

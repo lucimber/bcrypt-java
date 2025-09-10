@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     id("maven-publish")
+    id("com.diffplug.spotless") version "7.2.1"
 }
 
 group = "com.lucimber.crypto"
@@ -20,7 +21,7 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    
+
     // Integration test dependencies
     testImplementation("org.bouncycastle:bcprov-jdk18on:1.81")
     testImplementation("org.springframework.security:spring-security-crypto:6.5.3")
@@ -44,5 +45,46 @@ publishing {
         create<MavenPublication>("maven") {
             from(components["java"])
         }
+    }
+}
+
+// Spotless configuration for code formatting
+spotless {
+    // Java formatting
+    java {
+        // Target all Java source files
+        target("src/**/*.java")
+
+        // Remove unused imports
+        removeUnusedImports()
+
+        // Use Google Java Format
+        googleJavaFormat("1.28.0").aosp().reflowLongStrings()
+
+        // Import order
+        importOrder(
+            "",
+            "java",
+            "javax",
+            "",
+            "com.lucimber",
+            "",
+            "org",
+            "com",
+            "",
+            "",
+        )
+
+        // Ensure files end with a newline
+        endWithNewline()
+
+        // Trim trailing whitespace
+        trimTrailingWhitespace()
+    }
+
+    // Format build files
+    kotlinGradle {
+        target("*.gradle.kts")
+        ktlint()
     }
 }
