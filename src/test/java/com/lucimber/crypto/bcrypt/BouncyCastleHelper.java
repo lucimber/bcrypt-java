@@ -93,7 +93,7 @@ public class BouncyCastleHelper {
             int c3 = (i < len) ? BCRYPT_ALPHABET.indexOf(s.charAt(i++)) : 0;
             int c4 = (i < len) ? BCRYPT_ALPHABET.indexOf(s.charAt(i++)) : 0;
             
-            if (byteIndex < 16) bytes[byteIndex++] = (byte) ((c1 << 2) | (c2 >> 4));
+            bytes[byteIndex++] = (byte) ((c1 << 2) | (c2 >> 4));
             if (byteIndex < 16) bytes[byteIndex++] = (byte) ((c2 << 4) | (c3 >> 2));
             if (byteIndex < 16) bytes[byteIndex++] = (byte) ((c3 << 6) | c4);
         }
