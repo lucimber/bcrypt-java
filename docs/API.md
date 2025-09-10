@@ -108,7 +108,7 @@ String prefix = version.getPrefix(); // "2a" or "2b"
 ## Example: Complete Password Management
 
 ```java
-import com.lucimber.crypto.bcrypt.*;
+import com.lucimber.bcrypt.*;
 
 public class PasswordManager {
     private final BCryptService bcryptService = BCryptService.getInstance();

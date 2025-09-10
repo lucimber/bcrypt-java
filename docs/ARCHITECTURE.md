@@ -64,7 +64,7 @@ All core domain concepts are modeled as immutable value objects:
 ## Package Structure
 
 ```
-com.lucimber.crypto.bcrypt/
+com.lucimber.bcrypt/
 ├── BCryptService.java       # Public API
 ├── Password.java            # Value object
 ├── Hash.java               # Value object

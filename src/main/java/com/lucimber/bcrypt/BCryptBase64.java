@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Lucimber UG
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.lucimber.crypto.bcrypt;
+package com.lucimber.bcrypt;
 
 /**
  * BCrypt-specific Base64 encoding/decoding utility. BCrypt uses a custom Base64 alphabet that

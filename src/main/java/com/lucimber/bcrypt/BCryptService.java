@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2025 Lucimber UG
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.lucimber.crypto.bcrypt;
+package com.lucimber.bcrypt;
 
 /**
  * Service for BCrypt hashing and verification. This is the main entry point for BCrypt operations.

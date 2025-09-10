@@ -2,13 +2,13 @@
  * SPDX-FileCopyrightText: 2025 Lucimber UG
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.lucimber.crypto.bcrypt.integration;
+package com.lucimber.bcrypt.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.security.SecureRandom;
 
-import com.lucimber.crypto.bcrypt.*;
+import com.lucimber.bcrypt.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
