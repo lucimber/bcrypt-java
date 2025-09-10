@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 class BouncyCastleIntegrationTest {
     
     private final BCryptService service = BCryptService.getInstance();
+    private final SecureRandom random = new SecureRandom();
     
     @Test
     @DisplayName("Should generate hash compatible with Bouncy Castle")
@@ -42,7 +43,7 @@ class BouncyCastleIntegrationTest {
         
         // Generate a salt
         byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
+        random.nextBytes(salt);
         
         // Generate hash with Bouncy Castle using helper
         int cost = 12;
@@ -65,7 +66,7 @@ class BouncyCastleIntegrationTest {
     void shouldHandleVariousCostFactorsLikeBouncyCastle() {
         String passwordString = "testWithDifferentCosts";
         byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
+        random.nextBytes(salt);
         
         int[] costs = {4, 10, 12, 15};
         
@@ -99,8 +100,8 @@ class BouncyCastleIntegrationTest {
         // Generate two different salts
         byte[] salt1 = new byte[16];
         byte[] salt2 = new byte[16];
-        new SecureRandom().nextBytes(salt1);
-        new SecureRandom().nextBytes(salt2);
+        random.nextBytes(salt1);
+        random.nextBytes(salt2);
         
         // Generate with BC
         String bcHash1 = BouncyCastleHelper.hashWithBouncyCastle(passwordString, salt1, 10);
@@ -145,7 +146,7 @@ class BouncyCastleIntegrationTest {
             }
             
             byte[] salt = new byte[16];
-            new SecureRandom().nextBytes(salt);
+            random.nextBytes(salt);
             
             // Generate with BC using helper
             String bcHash = BouncyCastleHelper.hashWithBouncyCastle(passwordString, salt, 10);
@@ -175,7 +176,7 @@ class BouncyCastleIntegrationTest {
         String truncatedPassword = "a".repeat(72);
         
         byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
+        random.nextBytes(salt);
         
         // Generate with BC using helper
         String bcHashLong = BouncyCastleHelper.hashWithBouncyCastle(longPassword, salt, 10);

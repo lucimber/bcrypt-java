@@ -460,13 +460,13 @@ final class BCryptEngine {
         for (i = 0; i < plen; i++)
             P[i] = P[i] ^ streamtoword(key, koffp);
         
-        for (i = 0; i < plen; i += 2) {
+        for (i = 0; i < plen - 1; i += 2) {
             encipher(lr, 0);
             P[i] = lr[0];
             P[i + 1] = lr[1];
         }
         
-        for (i = 0; i < slen; i += 2) {
+        for (i = 0; i < slen - 1; i += 2) {
             encipher(lr, 0);
             S[i] = lr[0];
             S[i + 1] = lr[1];
@@ -485,7 +485,7 @@ final class BCryptEngine {
         for (i = 0; i < plen; i++)
             P[i] = P[i] ^ streamtoword(key, koffp);
         
-        for (i = 0; i < plen; i += 2) {
+        for (i = 0; i < plen - 1; i += 2) {
             lr[0] ^= streamtoword(salt, soffp);
             lr[1] ^= streamtoword(salt, soffp);
             encipher(lr, 0);
@@ -493,7 +493,7 @@ final class BCryptEngine {
             P[i + 1] = lr[1];
         }
         
-        for (i = 0; i < slen; i += 2) {
+        for (i = 0; i < slen - 1; i += 2) {
             lr[0] ^= streamtoword(salt, soffp);
             lr[1] ^= streamtoword(salt, soffp);
             encipher(lr, 0);
