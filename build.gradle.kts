@@ -1,7 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Lucimber UG
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 plugins {
     id("java-library")
-    id("maven-publish")
+    // Style and formatting
     id("com.diffplug.spotless") version "7.2.1"
+    // Publishing
+    id("com.vanniktech.maven.publish") version "0.34.0"
+    id("signing")
 }
 
 group = "com.lucimber"
@@ -10,8 +18,7 @@ version = "1.0.0"
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
-    withJavadocJar()
-    withSourcesJar()
+    // Javadoc and sources JARs are handled by the Vanniktech Maven Publish plugin
 }
 
 repositories {
@@ -19,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    // Testing
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -54,15 +62,6 @@ tasks.jar {
                 "Built-JDK" to System.getProperty("java.version"),
             ),
         )
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            artifactId = "lucimber-bcrypt"
-        }
     }
 }
 
@@ -108,4 +107,48 @@ spotless {
         target("*.gradle.kts")
         ktlint()
     }
+}
+
+// Publishing configuration
+mavenPublishing {
+    publishToMavenCentral()
+
+    signAllPublications()
+
+    coordinates("com.lucimber", "lucimber-bcrypt", "1.0.0")
+
+    pom {
+        name.set("Bcrypt")
+        description.set("A zero-dependency, implementation of the BCrypt password hashing algorithm.")
+        inceptionYear.set("2025")
+        url.set("https://github.com/lucimber/bcrypt-java")
+
+        licenses {
+            license {
+                name.set("Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("lucimber")
+                name.set("Lucimber UG")
+                url.set("https://github.com/lucimber/")
+                email.set("devdev@lucimber.com")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/lucimber/bcrypt-java.git")
+            developerConnection.set("scm:git:ssh://github.com:lucimber/bcrypt-java.git")
+            url.set("https://github.com/lucimber/bcrypt-java")
+        }
+    }
+}
+
+// Configure signing to use GPG
+signing {
+    useGpgCmd()
 }
