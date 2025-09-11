@@ -21,23 +21,14 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v3
     
-    - name: Build release
+    - name: Build and Test
       run: ./gradlew build
-    
-    - name: Run tests
-      run: ./gradlew test
     
     - name: Generate Javadoc
       run: ./gradlew javadoc
     
-    - name: Create Release JAR
-      run: ./gradlew jar
-    
-    - name: Create Source JAR
-      run: ./gradlew sourcesJar
-    
-    - name: Create Javadoc JAR  
-      run: ./gradlew javadocJar
+    - name: Generate Javadoc JAR
+      run: ./gradlew plainJavadocJar
     
     - name: Get version
       id: get_version
@@ -62,8 +53,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/bcrypt-${{ steps.get_version.outputs.VERSION }}.jar
-        asset_name: bcrypt-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_path: build/libs/lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}.jar
+        asset_name: lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}.jar
         asset_content_type: application/java-archive
     
     - name: Upload Sources JAR
@@ -72,8 +63,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/bcrypt-${{ steps.get_version.outputs.VERSION }}-sources.jar
-        asset_name: bcrypt-${{ steps.get_version.outputs.VERSION }}-sources.jar
+        asset_path: build/libs/lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}-sources.jar
+        asset_name: lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}-sources.jar
         asset_content_type: application/java-archive
     
     - name: Upload Javadoc JAR
@@ -82,6 +73,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/bcrypt-${{ steps.get_version.outputs.VERSION }}-javadoc.jar
-        asset_name: bcrypt-${{ steps.get_version.outputs.VERSION }}-javadoc.jar
+        asset_path: build/libs/lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}-javadoc.jar
+        asset_name: lucimber-bcrypt-${{ steps.get_version.outputs.VERSION }}-javadoc.jar
         asset_content_type: application/java-archive
