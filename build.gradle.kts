@@ -6,7 +6,7 @@
 plugins {
     id("java-library")
     // Style and formatting
-    id("com.diffplug.spotless") version "7.2.1"
+    id("com.diffplug.spotless") version "8.0.0"
     // Publishing
     id("com.vanniktech.maven.publish") version "0.34.0"
     id("signing")
