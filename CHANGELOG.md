@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Changed
+- deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.3 to 6.5.5 (#26) @dependabot[bot]
 - deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.81 to 1.82 (#25) @dependabot[bot]
 ## [1.0.0] - 2025-01-11
 
