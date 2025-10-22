@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Changed
+- bump actions/setup-java from 4 to 5 (#27) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 5.13.4 to 6.0.0 (#30) @dependabot[bot]
 - deps(deps): bump com.diffplug.spotless from 7.2.1 to 8.0.0 (#29) @dependabot[bot]
 - deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.3 to 6.5.5 (#26) @dependabot[bot]
