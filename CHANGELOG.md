@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Changed
+- bump github/codeql-action from 2 to 4 (#31) @dependabot[bot]
 - deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.5 to 6.5.6 (#32) @dependabot[bot]
 - bump actions/setup-java from 4 to 5 (#27) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 5.13.4 to 6.0.0 (#30) @dependabot[bot]
