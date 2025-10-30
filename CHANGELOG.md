@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+
+### ⚠️ Breaking Changes
+- bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
 - bump github/codeql-action from 2 to 4 (#31) @dependabot[bot]
 - deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.5 to 6.5.6 (#32) @dependabot[bot]
