@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
+- deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.6 to 7.0.0 (#37) @dependabot[bot]
 - deps(deps): bump com.diffplug.spotless from 8.0.0 to 8.1.0 (#38) @dependabot[bot]
 - bump actions/checkout from 5 to 6 (#36) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.0 to 6.0.1 (#34) @dependabot[bot]
