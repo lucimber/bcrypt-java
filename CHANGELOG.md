@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
+- deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.82 to 1.83 (#39) @dependabot[bot]
 - bump actions/upload-artifact from 5 to 6 (#40) @dependabot[bot]
 - deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.6 to 7.0.0 (#37) @dependabot[bot]
 - deps(deps): bump com.diffplug.spotless from 8.0.0 to 8.1.0 (#38) @dependabot[bot]
