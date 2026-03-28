@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
+- bump actions/upload-artifact from 6 to 7 (#50) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.1 to 6.0.3 (#48) @dependabot[bot]
 - deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.82 to 1.83 (#39) @dependabot[bot]
 - bump actions/upload-artifact from 5 to 6 (#40) @dependabot[bot]
