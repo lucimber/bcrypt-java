@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
+- deps(deps): bump gradle-wrapper from 8.5 to 9.5.1 (#61) @dependabot[bot]
 - deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.3 to 6.1.0 (#63) @dependabot[bot]
 - deps(deps): bump com.diffplug.spotless from 8.4.0 to 8.5.1 (#62) @dependabot[bot]
 - bump actions/github-script from 8 to 9 (#57) @dependabot[bot]
