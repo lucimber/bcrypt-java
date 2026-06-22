@@ -33,7 +33,7 @@ dependencies {
     // Integration test dependencies
     testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
     testImplementation("org.springframework.security:spring-security-crypto:7.0.5")
-    testImplementation("commons-logging:commons-logging:1.3.6")
+    testImplementation("commons-logging:commons-logging:1.4.0")
 }
 
 tasks.test {
