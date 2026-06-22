@@ -8,7 +8,7 @@ plugins {
     // Style and formatting
     id("com.diffplug.spotless") version "8.7.0"
     // Publishing
-    id("com.vanniktech.maven.publish") version "0.34.0"
+    id("com.vanniktech.maven.publish") version "0.37.0"
     id("signing")
 }
 
