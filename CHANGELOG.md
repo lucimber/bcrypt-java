@@ -2,78 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-
-
-### ⚠️ Breaking Changes
-- bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
-- deps(deps): bump org.springframework.security:spring-security-crypto from 7.0.5 to 7.1.0 (#65) @dependabot[bot]
-- deps(deps): bump com.vanniktech.maven.publish from 0.34.0 to 0.37.0 (#69) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 8.6.0 to 8.7.0 (#70) @dependabot[bot]
-- deps(deps): bump gradle-wrapper from 9.5.1 to 9.6.0 (#68) @dependabot[bot]
-- bump actions/checkout from 6 to 7 (#67) @dependabot[bot]
-- deps(deps): bump commons-logging:commons-logging from 1.3.6 to 1.4.0 (#66) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 8.5.1 to 8.6.0 (#64) @dependabot[bot]
-- deps(deps): bump gradle-wrapper from 8.5 to 9.5.1 (#61) @dependabot[bot]
-- deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.3 to 6.1.0 (#63) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 8.4.0 to 8.5.1 (#62) @dependabot[bot]
-- bump actions/github-script from 8 to 9 (#57) @dependabot[bot]
-- deps(deps): bump org.springframework.security:spring-security-crypto from 7.0.4 to 7.0.5 (#59) @dependabot[bot]
-- deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.83 to 1.84 (#58) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 8.1.0 to 8.4.0 (#55) @dependabot[bot]
-- deps(deps): bump org.springframework.security:spring-security-crypto from 7.0.0 to 7.0.4 (#54) @dependabot[bot]
-- deps(deps): bump commons-logging:commons-logging from 1.3.5 to 1.3.6 (#52) @dependabot[bot]
-- bump actions/upload-artifact from 6 to 7 (#50) @dependabot[bot]
-- deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.1 to 6.0.3 (#48) @dependabot[bot]
-- deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.82 to 1.83 (#39) @dependabot[bot]
-- bump actions/upload-artifact from 5 to 6 (#40) @dependabot[bot]
-- deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.6 to 7.0.0 (#37) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 8.0.0 to 8.1.0 (#38) @dependabot[bot]
-- bump actions/checkout from 5 to 6 (#36) @dependabot[bot]
-- deps(deps): bump org.junit.jupiter:junit-jupiter from 6.0.0 to 6.0.1 (#34) @dependabot[bot]
-- bump github/codeql-action from 2 to 4 (#31) @dependabot[bot]
-- deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.5 to 6.5.6 (#32) @dependabot[bot]
-- bump actions/setup-java from 4 to 5 (#27) @dependabot[bot]
-- deps(deps): bump org.junit.jupiter:junit-jupiter from 5.13.4 to 6.0.0 (#30) @dependabot[bot]
-- deps(deps): bump com.diffplug.spotless from 7.2.1 to 8.0.0 (#29) @dependabot[bot]
-- deps(deps): bump org.springframework.security:spring-security-crypto from 6.5.3 to 6.5.5 (#26) @dependabot[bot]
-- deps(deps): bump org.bouncycastle:bcprov-jdk18on from 1.81 to 1.82 (#25) @dependabot[bot]
-## [1.0.0] - 2025-01-11
+
+- Routine maintenance: refreshed test, build, and CI dependencies — notably
+  Bouncy Castle 1.84 (an upstream security release) and Spring Security 7.1.0.
+  All are build/test-scope only; the published library has no runtime
+  dependencies, so none of these changes affect consumers.
+
+## [1.0.0] - 2025-09-11
 
 ### Added
-- Initial release of lucimber-bcrypt library
-- Pure Java implementation of BCrypt password hashing algorithm
-- Zero runtime dependencies
-- Support for BCrypt 2a and 2b variants
-- Full compatibility with Spring Security BCrypt
-- Full compatibility with Bouncy Castle BCrypt
-- Domain-driven design with immutable value objects
-- Comprehensive test suite (110 tests)
-- Java 9+ module support (JPMS)
-- Self-documenting JAR with usage help
-- Maven Central publishing configuration
-- SPDX license headers
 
-### Features
-- `BCryptService` - Main service interface (singleton pattern)
-- `Password` - Secure password value object with memory clearing
-- `Hash` - BCrypt hash representation with parsing and validation
-- `Salt` - 16-byte salt with BCrypt Base64 encoding
-- `CostFactor` - Work factor configuration (4-31)
-- `BCryptVersion` - Algorithm version enum (2a/2b)
-- Constant-time password comparison for security
-- Automatic password truncation at 72 bytes (BCrypt specification)
-- SecureRandom for salt generation
+- Initial release of the `lucimber-bcrypt` library — a pure-Java implementation
+  of the BCrypt password hashing algorithm with zero runtime dependencies.
+- Support for the BCrypt `2a` and `2b` variants.
+- Cross-implementation compatibility with Spring Security and Bouncy Castle BCrypt.
+- Domain-driven, immutable value-object API:
+  - `BCryptService` — main service interface (singleton).
+  - `Password` — secure password value object with memory clearing.
+  - `Hash` — BCrypt hash parsing and validation.
+  - `Salt` — 16-byte salt with BCrypt Base64 encoding.
+  - `CostFactor` — work factor configuration (4–31).
+  - `BCryptVersion` — algorithm version enum (`2a`/`2b`).
+- Java Platform Module System (JPMS) support.
+- Self-documenting JAR with usage help and Maven Central publishing configuration.
+- SPDX license headers across all sources.
 
 ### Security
-- Constant-time comparison to prevent timing attacks
-- Secure memory handling with Password.clear() method
-- Rejection of empty passwords
-- Default cost factor of 10 for balanced security/performance
 
+- Constant-time hash comparison to resist timing attacks.
+- Secure memory handling via `Password.clear()`.
+- `SecureRandom`-based salt generation.
+- Automatic password truncation at 72 bytes per the BCrypt specification.
+- Rejection of empty passwords; default cost factor of 10 for a balanced
+  security/performance trade-off.
+
+[Unreleased]: https://github.com/lucimber/bcrypt-java/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/lucimber/bcrypt-java/releases/tag/v1.0.0
