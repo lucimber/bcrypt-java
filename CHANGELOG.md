@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - bump actions/upload-artifact from 4 to 5 (#33) @dependabot[bot]
 ### Changed
+- deps(deps): bump com.diffplug.spotless from 8.6.0 to 8.7.0 (#70) @dependabot[bot]
 - deps(deps): bump gradle-wrapper from 9.5.1 to 9.6.0 (#68) @dependabot[bot]
 - bump actions/checkout from 6 to 7 (#67) @dependabot[bot]
 - deps(deps): bump commons-logging:commons-logging from 1.3.6 to 1.4.0 (#66) @dependabot[bot]
