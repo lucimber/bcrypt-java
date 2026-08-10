@@ -31,7 +31,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // Integration test dependencies
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
     testImplementation("org.springframework.security:spring-security-crypto:7.1.0")
     // Provides org.springframework.util.StringUtils (optional dep of spring-security-crypto 7.x);
     // Spring Framework 7.0.x is the line Spring Security 7.1.0 targets.
