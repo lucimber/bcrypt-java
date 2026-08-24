@@ -35,7 +35,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-crypto:7.1.0")
     // Provides org.springframework.util.StringUtils (optional dep of spring-security-crypto 7.x);
     // Spring Framework 7.0.x is the line Spring Security 7.1.0 targets.
-    testImplementation("org.springframework:spring-core:7.0.8")
+    testImplementation("org.springframework:spring-core:7.0.9")
     testImplementation("commons-logging:commons-logging:1.4.0")
 }
 
